@@ -1,0 +1,73 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "TWW-API",
+    "description": "Description of the API",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3090",
+  "basePath": "/api/users",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/create": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "This endpoint creates a new user.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_name": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_email": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_password": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_profile": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_gmail_id": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_facebook_id": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "user_type": {
+                  "type": "string",
+                  "example": "any"
+                },
+                "member_id": {
+                  "type": "integer",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  }
+}
