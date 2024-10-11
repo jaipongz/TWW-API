@@ -1,3 +1,12 @@
-# .gitignore
+# Ignore node modules
 node_modules/
+
+# Ignore environment files
 .env
+
+# Ignore log files
+*.log
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
