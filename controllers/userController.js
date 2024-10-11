@@ -22,4 +22,14 @@ exports.createUser = async (req, res) => {
         res.status(500).json({ message: 'Error creating user', error: err.message }); // Include error message in the response
     }
 };
-
+exports.registerUser = async ({ username, email, password }) => {
+    // Implement your user registration logic here
+    // Example: hash password, store user info in database, etc.
+    
+    try {
+        const user = await userService.createUser({ username, email, password });
+        return { message: 'User registered successfully', user };
+    } catch (error) {
+        throw new Error('Registration failed: ' + error.message);
+    }
+};

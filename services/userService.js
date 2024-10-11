@@ -1,14 +1,20 @@
-const pool = require('../db'); // Adjust the path as necessary
+// services/userService.js
+const db = require('../db'); // Adjust the path as necessary
 
-exports.createUser = async (userData) => {
-    return new Promise((resolve, reject) => {
-        const query = `INSERT INTO users (user_name, user_email, user_password, user_profile, user_gmail_id, user_facebook_id, user_type, member_id) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        pool.query(query, [userData.user_name, userData.user_email, userData.user_password, userData.user_profile, userData.user_gmail_id, userData.user_facebook_id, userData.user_type, userData.member_id], (error, results) => {
-            if (error) {
-                return reject(error);
-            }
-            resolve({ id: results.insertId, ...userData });
-        });
-    });
+exports.createUser = async ({ username, email, password }) => {
+    // Example: Hash the password and store user details in the database
+    const hashedPassword = await hashPassword(password); // Implement hashPassword
+    const user = { username, email, password: hashedPassword };
+    
+    // Save user to the database
+    await db.query('INSERT INTO users SET ?', user);
+    return user;
+};
+
+// Example of password hashing function (use a library like bcrypt)
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (password) => {
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
 };
