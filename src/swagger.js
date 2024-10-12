@@ -1,16 +1,23 @@
-// src/swagger.js
 const swaggerAutogen = require('swagger-autogen')();
 
 const doc = {
     info: {
-        title: 'API Documentation',
-        description: 'Description of the API',
+        title: 'TWW-API',
+        description: 'No one is as talented as your mother.',
     },
-    host: 'localhost:3090',  // Use the correct port
-    schemes: ['http'],       // Adjust if using https
+    host: 'localhost:3090',
+    schemes: ['http'],
+    securityDefinitions: {
+        Bearer: {
+            type: "apiKey",
+            name: "Authorization",
+            in: "header",
+            description: "Enter 'Bearer' [space] and then your token."
+        }
+    } 
 };
 
 const outputFile = './swagger-output.json';
-const endpointsFiles = ['./routes/userRoutes.js'];  // Ensure this points to your route files
+const endpointsFiles = ['./routes/userRoutes.ts'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);

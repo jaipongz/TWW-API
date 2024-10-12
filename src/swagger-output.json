@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "API Documentation",
-    "description": "Description of the API",
+    "title": "TWW-API",
+    "description": "No one is as talented as your mother.",
     "version": "1.0.0"
   },
   "host": "localhost:3090",
@@ -10,57 +10,20 @@
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter 'Bearer' [space] and then your token."
+    }
+  },
   "paths": {
-    "/create": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "user_name": {
-                  "example": "any"
-                },
-                "user_email": {
-                  "example": "any"
-                },
-                "user_password": {
-                  "example": "any"
-                },
-                "user_profile": {
-                  "example": "any"
-                },
-                "user_gmail_id": {
-                  "example": "any"
-                },
-                "user_facebook_id": {
-                  "example": "any"
-                },
-                "user_type": {
-                  "example": "any"
-                },
-                "member_id": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/register": {
       "post": {
+        "tags": [
+          "User"
+        ],
         "description": "",
         "parameters": [
           {
@@ -86,8 +49,86 @@
           "201": {
             "description": "Created"
           },
-          "400": {
-            "description": "Bad Request"
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/test": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/protected-route": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
