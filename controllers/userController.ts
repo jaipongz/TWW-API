@@ -30,6 +30,16 @@ export class userController {
         }
     }
 
+    public static async logout(req: Request, res: Response): Promise<Response> {
+        // #swagger.tags = ['User']
+        try {
+            res.clearCookie('token');
+            return res.status(200).json({ status: 'success', message: 'Logged out successfully' });
+        } catch (e) {
+            return res.status(500).json({ status: 'fail', message: 'Logout failed' });
+        }
+    }
+
     public static async test(req: Request, res: Response) {
         /* #swagger.security = [{
             "Bearer": []

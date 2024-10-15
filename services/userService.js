@@ -53,8 +53,28 @@ const login = async (user_name, password) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const token = req.cookies.token || req.headers["authorization"].split(" ")[1];
+    
+    if (!token) {
+      return res.status(400).json({ message: "No token provided" });
+    }
+    await blacklistToken(token);
+    res.clearCookie('token');
+
+    req.session = null;
+
+    return res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    return res.status(500).json({ message: 'Logout failed' });
+  }
+};
+
 module.exports = {
   register,
   hashPassword,
   login,
+  logout
 };

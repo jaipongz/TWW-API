@@ -12,13 +12,11 @@ passport.use(
       callbackURL: "http://localhost:3090/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, done) {
-      // ดึงข้อมูลผู้ใช้จาก Google
       const googleId = profile.id;
       const name = profile.displayName;
       const email = profile.emails[0].value;
       const profileImage = profile.photos[0].value;
 
-      // ค้นหาในฐานข้อมูลก่อนว่ามีผู้ใช้คนนี้หรือยัง
       db.query(
         "SELECT * FROM users WHERE google_id = ?",
         [googleId],
@@ -26,7 +24,6 @@ passport.use(
           if (err) {
             return done(err);
           }
-
           if (results.length > 0) {
             return done(null, results[0]);
           } else {
@@ -37,7 +34,6 @@ passport.use(
                 if (err) {
                   return done(err);
                 }
-
                 db.query(
                   "SELECT * FROM users WHERE google_id = ?",
                   [googleId],
@@ -45,7 +41,6 @@ passport.use(
                     if (err) {
                       return done(err);
                     }
-
                     return done(null, results[0]);
                   }
                 );

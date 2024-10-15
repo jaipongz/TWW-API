@@ -5,6 +5,7 @@ const authMiddleware = require("../Middleware/authMiddleware");
 const passport = require('../Middleware/google');
 userRouter.post('/register',userController.register);
 userRouter.post('/login', userController.login);
+userRouter.post('/logout', authMiddleware, userController.logout);
 userRouter.get('/test', authMiddleware, userController.test);
 
 userRouter.get('/auth/google', passport.authenticate('google', {
