@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 const userService = require('../services/userService');
+const otpService = require('../services/otpService');
 export class userController {
     public static async register(req: Request, res: Response) {
         // #swagger.tags = ['User']
@@ -44,8 +45,82 @@ export class userController {
         /* #swagger.security = [{
             "Bearer": []
         }] */
-        
+
         // This endpoint is protected by the authMiddleware
         res.status(200).json({ status: 'success', message: 'Authenticated!!!' });
+    }
+    public static async forgot(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ status: 'fail', message: 'Bad request: Email is required' });
+            }
+
+            const otp = otpService.generateOTP();
+
+            await otpService.sendOtp(email, otp);
+
+            await otpService.saveOTP(email, otp);
+
+            return res.status(200).json({ status: 'success', message: 'OTP sent to your email' });
+
+        } catch (error) {
+            console.error('Error in forgot function:', error);
+
+            return res.status(500).json({ status: 'error', message: error });
+        }
+    }
+
+    public static async verify(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        try {
+            const { email, otp } = req.body;
+
+            if (!email || !otp) {
+                return res.status(400).json({ status: 'fail', message: 'Bad request: Email and OTP are required' });
+            }
+
+            const isOtpValid = await otpService.verifyOTP(email, otp);
+
+            if (!isOtpValid) {
+                return res.status(400).json({ status: 'fail', message: 'Invalid or expired OTP' });
+            }
+
+            return res.status(200).json({ status: 'success', message: 'OTP verified successfully' });
+
+        } catch (error) {
+            console.error('Error in verify function:', error);
+
+            return res.status(500).json({ status: 'error', message: 'Internal server error. Please try again later.' });
+        }
+    }
+
+    public static async resetPassword(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        try {
+            const { email, newPassword } = req.body;
+
+            if (!email ||!newPassword) {
+                return res.status(400).json({ status: 'fail', message: 'Bad request: Email and newPassword are required' });
+            }
+
+            const hashedPassword = await userService.hashPassword(newPassword);
+
+            const isPasswordUpdated = await userService.updatePassword(email, hashedPassword);
+
+            if (!isPasswordUpdated) {
+                return res.status(500).json({ status: 'fail', message: 'Failed to reset password. Please try again later.' });
+            }
+
+            return res.status(200).json({ status: 'success', message: 'Password reset successfully' });
+
+        } catch (error) {
+            console.error('Error in resetPassword function:', error);
+
+            // Handle any server errors
+            return res.status(500).json({ status: 'error', message: 'Internal server error. Please try again later.' });
+        }
     }
 }

@@ -31,50 +31,67 @@ const login = async (user_name, password) => {
     const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [
       user_name,
     ]);
+    
     if (rows.length === 0) {
-      throw new Error("Invalid credentials");
+      return { error: "Invalid credentials" };
     }
+    
     const user = rows[0];
+    
     const isMatch = await bcrypt.compare(password, user.user_password);
     if (!isMatch) {
-      throw new Error("Invalid password");
+      return { error: "Invalid password" };
     }
+    
     const token = jwt.sign(
       { id: user.user_id, user_name: user.user_user_name },
       process.env.JWT_SECRET,
       { expiresIn: "1m" }
     );
-    return {
-      token
-    };
+    
+    return { token };
   } catch (error) {
     console.error("Error logging in user:", error);
-    throw new Error("Invalid username or password");
+    return { error: "An error occurred during login" };
   }
 };
 
 const logout = async (req, res) => {
   try {
-    const token = req.cookies.token || req.headers["authorization"].split(" ")[1];
-    
+    const token =
+      req.cookies.token || req.headers["authorization"].split(" ")[1];
+
     if (!token) {
       return res.status(400).json({ message: "No token provided" });
     }
     await blacklistToken(token);
-    res.clearCookie('token');
+    res.clearCookie("token");
 
     req.session = null;
 
-    return res.status(200).json({ message: 'Logged out successfully' });
+    return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Error logging out:", error);
-    return res.status(500).json({ message: 'Logout failed' });
+    return res.status(500).json({ message: "Logout failed" });
   }
 };
 
+const updatePassword = async (email, hashedPassword) => {
+  try {
+    await db.query("UPDATE users SET user_password = ? WHERE user_email = ?", [
+      hashedPassword,
+      email,
+    ]);
+    return true;
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return false;
+  }
+};
 module.exports = {
   register,
   hashPassword,
   login,
-  logout
+  logout,
+  updatePassword,
 };
