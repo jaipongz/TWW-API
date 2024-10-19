@@ -37,12 +37,9 @@ const otpService = {
                 createdAt: new Date(),
                 expirationTime,
             };
-
             otps.push(otpData);
-
             const oneMinute = 60 * 1000;
             otpRequests[email] = { lastRequestTime: new Date().getTime() };
-
             return otpData;
         } catch (error) {
             console.log('Save OTP Error:', error);
@@ -50,20 +47,15 @@ const otpService = {
     },
     verifyOTP: async (email, otp) => {
         console.log(otps);
-        
         const otpEntry = otps.find(entry => entry.email === email && entry.otp === otp);
-
         if (!otpEntry) {
             return false;
         }
-
         const currentTime = new Date().getTime();
         const otpExpirationTime = new Date(otpEntry.createdAt).getTime() + 10 * 60 * 1000;
-
         if (currentTime > otpExpirationTime) {
             return false;
         }
-
         return true;
     }
 };

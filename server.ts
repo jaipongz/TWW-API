@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./src/swagger-output.json');
 const { config } = require('dotenv');
 const { userRouter } = require('./routes/userRoutes');
+const { memberRouter  } = require('./routes/memberRoute');
 const session = require('express-session'); // To manage session
 const passport = require('./Middleware/google'); // Import the Google middleware
 
@@ -29,6 +30,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use(userRouter);
+app.use(memberRouter );
 
 const port = process.env.PORT || 3090;
 app.listen(port, () => {

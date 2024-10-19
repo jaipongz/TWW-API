@@ -1,15 +1,29 @@
 import { Request, Response } from 'express';
 const userService = require('../services/userService');
 const otpService = require('../services/otpService');
+const tokenBlacklist = new Set();
 export class userController {
+
     public static async register(req: Request, res: Response) {
         // #swagger.tags = ['User']
         try {
             const { username, email, password } = req.body;
+
+            const userNameCheck = await userService.checkUsername(username);
+            if (userNameCheck) {
+                return res.status(409).json({ status: 'fail', message: `Username ${username} is already in use` });
+            }
+
+            const emailCheck = await userService.checkEmail(email);
+            if (emailCheck) {
+                return res.status(409).json({ status: 'fail', message: `Email ${email} is already in use` });
+            }
+
             const newUser = await userService.register(username, email, password);
-            res.status(201).json({ status: 'success', data: newUser });
-        } catch (e) {
-            res.status(500).json({ status: 'fail', message: e });
+            return res.status(201).json({ status: 'success', data: newUser });
+
+        } catch (error) {
+            return res.status(500).json({ status: 'fail', message: error });
         }
     }
 
@@ -49,6 +63,7 @@ export class userController {
         // This endpoint is protected by the authMiddleware
         res.status(200).json({ status: 'success', message: 'Authenticated!!!' });
     }
+
     public static async forgot(req: Request, res: Response) {
         // #swagger.tags = ['User']
         try {
@@ -58,10 +73,14 @@ export class userController {
                 return res.status(400).json({ status: 'fail', message: 'Bad request: Email is required' });
             }
 
+            const resultCheck = await userService.checkEmail(email);
+            if (!resultCheck) {
+                return res.status(404).json({ status: 'fail', message: 'Not found: Email not found' });
+            }
+
             const otp = otpService.generateOTP();
 
             await otpService.sendOtp(email, otp);
-
             await otpService.saveOTP(email, otp);
 
             return res.status(200).json({ status: 'success', message: 'OTP sent to your email' });
@@ -69,7 +88,7 @@ export class userController {
         } catch (error) {
             console.error('Error in forgot function:', error);
 
-            return res.status(500).json({ status: 'error', message: error });
+            return res.status(500).json({ status: 'error', message: 'Internal server error' });
         }
     }
 
@@ -102,7 +121,7 @@ export class userController {
         try {
             const { email, newPassword } = req.body;
 
-            if (!email ||!newPassword) {
+            if (!email || !newPassword) {
                 return res.status(400).json({ status: 'fail', message: 'Bad request: Email and newPassword are required' });
             }
 
@@ -119,7 +138,6 @@ export class userController {
         } catch (error) {
             console.error('Error in resetPassword function:', error);
 
-            // Handle any server errors
             return res.status(500).json({ status: 'error', message: 'Internal server error. Please try again later.' });
         }
     }

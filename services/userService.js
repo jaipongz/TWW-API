@@ -31,24 +31,24 @@ const login = async (user_name, password) => {
     const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [
       user_name,
     ]);
-    
+
     if (rows.length === 0) {
       return { error: "Invalid credentials" };
     }
-    
+
     const user = rows[0];
-    
+
     const isMatch = await bcrypt.compare(password, user.user_password);
     if (!isMatch) {
       return { error: "Invalid password" };
     }
-    
+
     const token = jwt.sign(
       { id: user.user_id, user_name: user.user_user_name },
       process.env.JWT_SECRET,
       { expiresIn: "1m" }
     );
-    
+
     return { token };
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -88,10 +88,47 @@ const updatePassword = async (email, hashedPassword) => {
     return false;
   }
 };
+
+const checkEmail = async (email) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT user_email FROM users WHERE user_email = ?`,
+      [email]
+    );
+
+    if (rows.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error", error);
+    
+  }
+};
+const checkUsername = async (userName) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT user_name FROM users WHERE user_name = ?`,
+      [userName]
+    );
+
+    if (rows.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error", error);
+    
+  }
+};
 module.exports = {
   register,
   hashPassword,
   login,
   logout,
   updatePassword,
+  checkEmail,
+  checkUsername
 };
