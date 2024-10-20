@@ -4,7 +4,7 @@ export class memberController {
     public static async membership(req: Request, res: Response) {
         // #swagger.tags = ['Member']
         try {
-            const {userId,memberType} = req.body;
+            const {userId,memberType,period} = req.body;
              console.log(`Membership`);
              console.log(userId);
              console.log(memberType);
