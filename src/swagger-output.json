@@ -165,6 +165,42 @@
         }
       }
     },
+    "/verifiedEmail": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/forgotPassword": {
       "post": {
         "tags": [
@@ -290,6 +326,9 @@
                   "example": "any"
                 },
                 "memberType": {
+                  "example": "any"
+                },
+                "period": {
                   "example": "any"
                 }
               }

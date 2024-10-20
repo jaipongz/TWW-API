@@ -21,6 +21,7 @@ userRouter.get('/auth/google/callback',
   }
 );
 
+userRouter.post('/verifiedEmail',userController.verifyEmail);
 userRouter.post('/forgotPassword',userController.forgot);
 userRouter.post('/verifyPassword',userController.verify);
 userRouter.post('/resetPassword',userController.resetPassword);

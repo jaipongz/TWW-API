@@ -91,6 +91,33 @@ export class userController {
             return res.status(500).json({ status: 'error', message: 'Internal server error' });
         }
     }
+    public static async verifyEmail(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ status: 'fail', message: 'Bad request: Email is required' });
+            }
+
+            const emailCheck = await userService.checkEmail(email);
+            if (emailCheck) {
+                return res.status(409).json({ status: 'fail', message: `Email ${email} is already in use` });
+            }
+            
+            const otp = otpService.generateOTP();
+
+            await otpService.sendOtp(email, otp);
+            await otpService.saveOTP(email, otp);
+
+            return res.status(200).json({ status: 'success',data:email, message: 'OTP sent to your email' });
+
+        } catch (error) {
+            console.error('Error in forgot function:', error);
+
+            return res.status(500).json({ status: 'error', message: 'Internal server error' });
+        }
+    }
 
     public static async verify(req: Request, res: Response) {
         // #swagger.tags = ['User']

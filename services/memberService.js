@@ -17,7 +17,6 @@ const checkMember = async (userId, memberType, period) => {
       const member = checkMember.rows[0];
       if (member.member_type === memberType) {
         let expiredDate = dayjs(member.end_date);
-
         switch (period) {
           case '1M':
             expiredDate = expiredDate.add(1, 'month');
