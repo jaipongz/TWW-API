@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 export class memberController {
-    public static async membership(req: Request, res: Response) {
+    public static async requestMembership(req: Request, res: Response) {
         // #swagger.tags = ['Member']
         try {
             const {userId,memberType,period} = req.body;

@@ -4,7 +4,7 @@ import { userController } from '../controllers/userController';
 const authMiddleware = require("../Middleware/authMiddleware");
 
 import { memberController } from '../controllers/memberController';
-memberRouter.post('/createMember', memberController.membership);
+memberRouter.post('/createMember', memberController.requestMembership);
 
 
 export { memberRouter };

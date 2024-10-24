@@ -91,6 +91,7 @@ export class userController {
             return res.status(500).json({ status: 'error', message: 'Internal server error' });
         }
     }
+    
     public static async verifyEmail(req: Request, res: Response) {
         // #swagger.tags = ['User']
         try {
