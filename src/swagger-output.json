@@ -344,6 +344,139 @@
           }
         }
       }
+    },
+    "/storeNovel": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "novelName": {
+                  "example": "any"
+                },
+                "penName": {
+                  "example": "any"
+                },
+                "group": {
+                  "example": "any"
+                },
+                "type": {
+                  "example": "any"
+                },
+                "tag": {
+                  "example": "any"
+                },
+                "rate": {
+                  "example": "any"
+                },
+                "desc": {
+                  "example": "any"
+                },
+                "userId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getNovelDetail": {
+      "get": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/addChapter": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "novelId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "chapterName",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/insertTag": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }

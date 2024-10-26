@@ -9,6 +9,8 @@ const { memberRouter  } = require('./routes/memberRoute');
 const { novelRouter  } = require('./routes/novelRoutes');
 const session = require('express-session'); // To manage session
 const passport = require('./Middleware/google'); // Import the Google middleware
+const path = require('path');
+
 
 // Initialize dotenv
 config();
@@ -30,6 +32,7 @@ app.use(passport.session());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.use('/storage', express.static(path.join(__dirname, 'src/storage')));
 app.use(userRouter);
 app.use(memberRouter );
 app.use(novelRouter );

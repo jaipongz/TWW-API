@@ -32,9 +32,7 @@ const upload = multer({
 });
 
 novelRouter.post('/storeNovel', upload.single('novel_propic'), novelController.createNovel);
-novelRouter.get('/getNovelDetail', novelController.createNovel);
-// novelRouter.get('/getNovel', novelController.getNovel);
-// novelRouter.post('/storeNovel', novelController.getNovel);
-
+novelRouter.get('/getNovelDetail', novelController.getNovel);
+novelRouter.post('/addChapter',novelController.createDescChapter);
 
 export { novelRouter };
