@@ -12,15 +12,11 @@ const createNovel = async (
   userId
 ) => {
   try {
-    console.log(novelName);
     const proPic = novel_propic.path;
-    console.log(proPic);
-
     await db.query(
-      "INSERT INTO novel (novel_name, pen_name, novel_group, type, tag_id, rate, novel_desc, novel_propic, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO novel (novel_name, pen_name, novel_group, type, tag, rate, novel_desc, novel_propic, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [novelName, penName, group, type, tag, rate, desc, proPic, userId]
     );
-
     return `Create Novel successful`;
   } catch (error) {
     console.error("Error creating novel:", error);
@@ -37,7 +33,7 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     }
 
     sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
-    params.push(Number(limit), Number(start)); // Convert to numbers
+    params.push(Number(limit), Number(start));
 
     const [novels] = await db.query(sql, params);
 
