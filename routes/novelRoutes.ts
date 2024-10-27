@@ -31,8 +31,10 @@ const upload = multer({
     }
 });
 
-novelRouter.post('/storeNovel', upload.single('novel_propic'), novelController.createNovel);
-novelRouter.get('/getNovelDetail', novelController.getNovel);
-novelRouter.post('/addChapter',novelController.createDescChapter);
-
+novelRouter.post('/api/novel/storeNovel',authMiddleware,upload.single('novel_propic'), novelController.createNovel);
+novelRouter.get('/api/novel/getNovelList', novelController.getNovel);
+novelRouter.get('/api/novel/getNovelDetail/:novelId', novelController.getNovelDetail);
+novelRouter.delete('/api/novel/destroyNovel/:novelId',authMiddleware, novelController.destroyNovel);
+novelRouter.put('/api/novel/updateNovel/:novelId',authMiddleware, upload.single('novel_propic'), novelController.updateNovel);
+novelRouter.post('/api/novel/addChapter',authMiddleware,novelController.createDescChapter);
 export { novelRouter };
