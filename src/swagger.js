@@ -22,6 +22,7 @@ const endpointsFiles = [
     './routes/userRoutes.ts',
     './routes/memberRoute.ts',
     './routes/novelRoutes.ts',
+    './routes/comunicationRoutes.ts',
 
 ];
 

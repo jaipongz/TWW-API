@@ -1,8 +1,6 @@
 const db = require("../db");
 const dayjs = require('dayjs');
-const addMember = async (userId, memberType) => {
-    
-};
+const addMember = async (userId, memberType) => {};
 
 const checkMember = async (userId, memberType, period) => {
   try {

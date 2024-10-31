@@ -28,19 +28,16 @@ const hashPassword = async (password) => {
 
 const login = async (user_name, password) => {
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [
-      user_name,
-    ]);
+    const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [user_name]);
 
     if (rows.length === 0) {
-      return { error: "Invalid credentials" };
+      return { error: true, code: 401, message: "Invalid credentials" };
     }
 
     const user = rows[0];
-
     const isMatch = await bcrypt.compare(password, user.user_password);
     if (!isMatch) {
-      return { error: "Invalid password" };
+      return { error: true, code: 401, message: "Invalid password" };
     }
 
     const token = jwt.sign(
@@ -49,10 +46,10 @@ const login = async (user_name, password) => {
       { expiresIn: "1m" }
     );
 
-    return { token };
+    return { error: false, token };
   } catch (error) {
     console.error("Error logging in user:", error);
-    return { error: "An error occurred during login" };
+    return { error: true, code: 500, message: "An error occurred during login" };
   }
 };
 

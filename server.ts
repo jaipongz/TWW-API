@@ -7,12 +7,12 @@ const { config } = require('dotenv');
 const { userRouter } = require('./routes/userRoutes');
 const { memberRouter  } = require('./routes/memberRoute');
 const { novelRouter  } = require('./routes/novelRoutes');
+const { commonRouter  } = require('./routes/comunicationRoutes');
 const session = require('express-session'); // To manage session
 const passport = require('./Middleware/google'); // Import the Google middleware
 const path = require('path');
 
 
-// Initialize dotenv
 config();
 
 const app = express();
@@ -23,7 +23,7 @@ const corsOptions = {
     credentials: true,
 };
 app.use(session({
-    secret: process.env.SECRET_PRODUCT, // use a strong secret in production
+    secret: process.env.SECRET_PRODUCT,
     resave: false,
     saveUninitialized: true,
 }));
@@ -36,6 +36,7 @@ app.use('/storage', express.static(path.join(__dirname, 'src/storage')));
 app.use(userRouter);
 app.use(memberRouter );
 app.use(novelRouter );
+// app.use(commonRouter);
 
 const port = process.env.PORT || 3090;
 app.listen(port, () => {
