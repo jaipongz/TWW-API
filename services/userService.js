@@ -31,7 +31,7 @@ const login = async (user_name, password) => {
     const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [user_name]);
 
     if (rows.length === 0) {
-      return { error: true, code: 401, message: "Invalid credentials" };
+      return { error: true, code: 401, message: "Invalid username" };
     }
 
     const user = rows[0];

@@ -45,7 +45,6 @@ export class userController {
             return res.status(500).json({ status: 'fail', message: 'Internal Server Error' });
         }
     }
-    
 
     public static async logout(req: Request, res: Response): Promise<Response> {
         // #swagger.tags = ['User']
