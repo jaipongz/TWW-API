@@ -1,25 +1,34 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction, RequestHandler} from 'express';
 const CommonService = require('../services/commonService');
 
-// 
 
 export class commonController {
     public static async postComment(req: Request, res: Response) {
         const { novelId, chapterId, userId, content } = req.body;
-        const result = await CommonService(CommonService.postComment, res, novelId, chapterId, userId, content);
+        console.log('Oncontroller');
+        
+        const result = await CommonService.postComment(novelId, chapterId, userId, content);
         if (result) {
             res.status(201).json({ status: 'success', message: "Comment added successfully", commentId: result.insertId });
+        }else{
+            res.status(500).json({ status: 'fail', message: "Comment added fail", commentId: result.insertId });
+
         }
     }
 
-    public static async deleteComment(req: Request, res: Response) {
+    public static deleteComment: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const { commentId } = req.params;
-        const result = await CommonService(CommonService.deleteComment, res, commentId);
-        if (result && result.affectedRows === 0) {
-            return res.status(404).json({ status: 'error', message: "Comment not found" });
+        try {
+            const result = await CommonService.deleteComment(commentId);
+            if (result && result.affectedRows === 0) {
+                res.status(404).json({ status: 'error', message: "Comment not found" });
+                return;
+            }
+            res.status(200).json({ status: 'success', message: "Comment deleted successfully" });
+        } catch (error) {
+            next(error);
         }
-        res.status(200).json({ status: 'success', message: "Comment deleted successfully" });
-    }
+    };
 
     public static async getCommentsByNovel(req: Request, res: Response) {
         const { novelId } = req.params;
@@ -45,14 +54,19 @@ export class commonController {
         }
     }
 
-    public static async removeLike(req: Request, res: Response) {
+    public static removeLike: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const { novelId, chapterId, userId } = req.body;
-        const result = await CommonService(CommonService.removeLike, res, novelId, chapterId, userId);
-        if (result && result.affectedRows === 0) {
-            return res.status(404).json({ status: 'error', message: "Like not found" });
+        try {
+            const result = await CommonService.removeLike(novelId, chapterId, userId);
+            if (result && result.affectedRows === 0) {
+                res.status(404).json({ status: 'error', message: "Like not found" });
+                return;
+            }
+            res.status(200).json({ status: 'success', message: "Unliked successfully" });
+        } catch (error) {
+            next(error); // Pass errors to the next middleware for error handling
         }
-        res.status(200).json({ status: 'success', message: "Unliked successfully" });
-    }
+    };
 
     public static async getLikeCountByNovel(req: Request, res: Response) {
         const { novelId } = req.params;

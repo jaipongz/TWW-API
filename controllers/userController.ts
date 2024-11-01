@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 const userService = require('../services/userService');
 const otpService = require('../services/otpService');
 const tokenBlacklist = new Set();
+import jwt from 'jsonwebtoken';
+
 export class userController {
 
     public static async register(req: Request, res: Response) {
@@ -167,6 +169,16 @@ export class userController {
             console.error('Error in resetPassword function:', error);
 
             return res.status(500).json({ status: 'error', message: 'Internal server error. Please try again later.' });
+        }
+    }
+    
+    public static async genToken(req: Request, res: Response) {
+        // #swagger.tags = ['Global']
+        try {
+            const token = jwt.sign({ officerId: 'DT-551204', role: 'doctor' }, process.env.JWT_SECRET + "", { expiresIn: '24h' });
+            res.status(200).json({ status: 'success', data: token });
+        } catch (error) {
+            res.status(500).json({ status: 'fail', message: 'Internal server error' });
         }
     }
 }

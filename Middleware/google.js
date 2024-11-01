@@ -2,8 +2,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { config } = require("dotenv");
 const db = require("../db");
-config(); // Load environment variables
-
+config();
 passport.use(
   new GoogleStrategy(
     {
@@ -53,12 +52,10 @@ passport.use(
   )
 );
 
-// Serializing user info into session
 passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-// Deserializing the user info
 passport.deserializeUser((obj, done) => {
   done(null, obj);
 });

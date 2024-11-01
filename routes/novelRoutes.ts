@@ -2,7 +2,7 @@ const express = require('express');
 const novelRouter = express.Router();
 const multer = require('multer');
 const path = require('path');
-import { userController } from '../controllers/userController';
+import { verifyToken } from '../Middleware/authMiddleware';
 const authMiddleware = require("../Middleware/authMiddleware");
 import { novelController } from '../controllers/novelController';
 
@@ -31,10 +31,10 @@ const upload = multer({
     }
 });
 
-novelRouter.post('/api/novel/storeNovel',authMiddleware,upload.single('novel_propic'), novelController.createNovel);
+novelRouter.post('/api/novel/storeNovel',verifyToken,upload.single('novel_propic'), novelController.createNovel);
 novelRouter.get('/api/novel/getNovelList', novelController.getNovel);
 novelRouter.get('/api/novel/getNovelDetail/:novelId', novelController.getNovelDetail);
-novelRouter.delete('/api/novel/destroyNovel/:novelId',authMiddleware, novelController.destroyNovel);
-novelRouter.put('/api/novel/updateNovel/:novelId',authMiddleware, upload.single('novel_propic'), novelController.updateNovel);
-novelRouter.post('/api/novel/addChapter',authMiddleware,novelController.createDescChapter);
+novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelController.destroyNovel);
+novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
+novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
 export { novelRouter };

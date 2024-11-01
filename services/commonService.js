@@ -1,5 +1,6 @@
-// commonService.js
-import db from "../db"; // Adjust the path as necessary
+
+const db = require("../db");
+
 
 const commonService = {
   async postComment(novelId, chapterId, userId, content) {
