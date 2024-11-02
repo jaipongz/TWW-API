@@ -36,7 +36,7 @@ app.use('/storage', express.static(path.join(__dirname, 'src/storage')));
 app.use(userRouter);
 app.use(memberRouter );
 app.use(novelRouter );
-// app.use(commonRouter);
+app.use(commonRouter);
 
 const port = process.env.PORT || 3090;
 app.listen(port, () => {

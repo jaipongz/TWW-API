@@ -662,6 +662,9 @@
     },
     "/comments": {
       "post": {
+        "tags": [
+          "Communication"
+        ],
         "description": "",
         "parameters": [
           {
@@ -689,12 +692,23 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/comments/{commentId}": {
       "delete": {
+        "tags": [
+          "Communication"
+        ],
         "description": "",
         "parameters": [
           {
@@ -710,12 +724,23 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/comments/novel/{novelId}": {
       "get": {
+        "tags": [
+          "Communication"
+        ],
         "description": "",
         "parameters": [
           {
@@ -728,12 +753,23 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/comments/chapter/{chapterId}": {
       "get": {
+        "tags": [
+          "Communication"
+        ],
         "description": "",
         "parameters": [
           {
@@ -747,147 +783,12 @@
           "200": {
             "description": "OK"
           }
-        }
-      }
-    },
-    "/likes": {
-      "post": {
-        "description": "",
-        "parameters": [
+        },
+        "security": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "novelId": {
-                  "example": "any"
-                },
-                "chapterId": {
-                  "example": "any"
-                },
-                "userId": {
-                  "example": "any"
-                }
-              }
-            }
+            "Bearer": []
           }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/likes/count/novel/{novelId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "novelId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/likes/count/chapter/{chapterId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/shares": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "novelId": {
-                  "example": "any"
-                },
-                "chapterId": {
-                  "example": "any"
-                },
-                "userId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      }
-    },
-    "/shares/count/novel/{novelId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "novelId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/shares/count/chapter/{chapterId}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "chapterId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+        ]
       }
     }
   }

@@ -29,7 +29,7 @@ const otpService = {
 
     saveOTP: async (email, otp) => {
         try {
-            const expirationTime = new Date(Date.now() + 10 * 60000);
+            const expirationTime = new Date(Date.now() + 1 * 60000);
 
             const otpData = {
                 email,
@@ -52,7 +52,7 @@ const otpService = {
             return false;
         }
         const currentTime = new Date().getTime();
-        const otpExpirationTime = new Date(otpEntry.createdAt).getTime() + 10 * 60 * 1000;
+        const otpExpirationTime = new Date(otpEntry.createdAt).getTime() + 1 * 60 * 1000;
         if (currentTime > otpExpirationTime) {
             return false;
         }
