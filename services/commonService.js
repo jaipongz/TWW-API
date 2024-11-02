@@ -13,6 +13,19 @@ const postComment = async (novelId, chapterId, userId, content) => {
   }
 };
 
+const updateComment = async (commentId, content) => {
+  try {
+    const result = await db.query(
+      `UPDATE comments SET content = ?, updated_date = NOW() WHERE comment_id = ?`,
+      [content, commentId]
+    );
+    return result;
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    throw new Error("Failed to update comment");
+  }
+};
+
 const deleteComment = async (commentId) => {
   try {
     const result = await db.query(`DELETE FROM comments WHERE comment_id = ?`, [
@@ -90,4 +103,10 @@ const getCommentsByChapter = async (chapterId) => {
 //   );
 // },
 
-module.exports = { postComment, deleteComment,getCommentsByNovel ,getCommentsByChapter};
+module.exports = { 
+  postComment, 
+  deleteComment,
+  getCommentsByNovel,
+  getCommentsByChapter,
+  updateComment
+};

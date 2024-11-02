@@ -6,6 +6,7 @@ const commonRouter = express.Router();
 
 commonRouter.post('/comments',commonController.postComment);
 commonRouter.delete('/comments/:commentId',  commonController.deleteComment);
+commonRouter.put('/comments/:commentId', commonController.updateComment);
 commonRouter.get('/comments/novel/:novelId', commonController.getCommentsByNovel);
 commonRouter.get('/comments/chapter/:chapterId', commonController.getCommentsByChapter);
 

@@ -24,6 +24,29 @@ export class commonController {
         }
     }
 
+    public static async updateComment(req: Request, res: Response) {
+         // #swagger.tags = ['Communication']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+          const { commentId } = req.params;
+          const { content } = req.body;
+          if (!content) {
+             res.status(400).json({ status: 'fail', message: 'Content is required to update the comment' });
+          }
+          const [response] = await commonService.updateComment(commentId, content);
+          if (response.affectedRows > 0) {
+            res.status(200).json({ status: 'success', message: "Comment updated successfully" });
+          } else {
+            res.status(404).json({ status: 'fail', message: "Comment not found" });
+          }
+        } catch (error) {
+          console.error("Error updating comment:", error);
+          res.status(500).json({ status: 'error', message: 'An unexpected error occurred while updating the comment' });
+        }
+      }
+
     public static async deleteComment(req: Request, res: Response) {
         // #swagger.tags = ['Communication']
         /* #swagger.security = [{
