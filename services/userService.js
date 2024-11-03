@@ -28,7 +28,9 @@ const hashPassword = async (password) => {
 
 const login = async (user_name, password) => {
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [user_name]);
+    const [rows] = await db.query("SELECT * FROM users WHERE user_name = ?", [
+      user_name,
+    ]);
 
     if (rows.length === 0) {
       return { error: true, code: 401, message: "Invalid username" };
@@ -49,7 +51,11 @@ const login = async (user_name, password) => {
     return { error: false, token };
   } catch (error) {
     console.error("Error logging in user:", error);
-    return { error: true, code: 500, message: "An error occurred during login" };
+    return {
+      error: true,
+      code: 500,
+      message: "An error occurred during login",
+    };
   }
 };
 
@@ -100,7 +106,6 @@ const checkEmail = async (email) => {
     }
   } catch (error) {
     console.log("Error", error);
-    
   }
 };
 const checkUsername = async (userName) => {
@@ -117,7 +122,49 @@ const checkUsername = async (userName) => {
     }
   } catch (error) {
     console.log("Error", error);
+  }
+};
+
+const getProfile = async (userId) => {
+  try {
+    const sql = `SELECT user_name, user_email, user_profile FROM users WHERE user_id = ?`;
     
+    const [rows] = await db.query(sql, [userId]);
+    
+    if (rows.length === 0) {
+      return null; 
+    }
+
+    const result = rows[0];
+
+    const profile = {
+      user_name: result.user_name,
+      user_email: result.user_email,
+      user_profile: result.user_profile
+        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/profilePic/${result.user_profile.split("\\").pop()}`
+        : null,
+    };
+
+    return profile;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
+};
+const updateProfilePic = async (userId, profile_pic) => {
+  try {
+    const proPic = profile_pic.path;
+    const sql = `UPDATE users SET user_profile = ? WHERE user_id = ?`;
+    await db.query(sql, [proPic,userId], (error, results) => {
+      if (error) {
+        console.log('Error update profile:', error);
+      } else {
+        const result = results.rows[0];
+        return result;
+      }
+    });
+  } catch (error) {
+    throw error;
   }
 };
 module.exports = {
@@ -127,5 +174,7 @@ module.exports = {
   logout,
   updatePassword,
   checkEmail,
-  checkUsername
+  checkUsername,
+  updateProfilePic,
+  getProfile,
 };

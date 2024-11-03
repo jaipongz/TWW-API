@@ -30,6 +30,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' })); // Increased limit to 10 MB
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.use('/storage', express.static(path.join(__dirname, 'src/storage')));

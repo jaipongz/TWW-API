@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 const userService = require('../services/userService');
 const otpService = require('../services/otpService');
 const tokenBlacklist = new Set();
@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 export class userController {
 
     public static async register(req: Request, res: Response) {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { username, email, password } = req.body;
 
@@ -30,7 +30,7 @@ export class userController {
     }
 
     public static async login(req: Request, res: Response): Promise<Response> {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { username, password } = req.body;
             const response = await userService.login(username, password);
@@ -47,7 +47,7 @@ export class userController {
     }
 
     public static async logout(req: Request, res: Response): Promise<Response> {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             res.clearCookie('token');
             return res.status(200).json({ status: 'success', message: 'Logged out successfully' });
@@ -66,7 +66,7 @@ export class userController {
     }
 
     public static async forgot(req: Request, res: Response) {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { email } = req.body;
 
@@ -94,7 +94,7 @@ export class userController {
     }
     
     public static async verifyEmail(req: Request, res: Response) {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { email } = req.body;
 
@@ -122,7 +122,7 @@ export class userController {
     }
 
     public static async verify(req: Request, res: Response) {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { email, otp } = req.body;
 
@@ -146,7 +146,7 @@ export class userController {
     }
 
     public static async resetPassword(req: Request, res: Response) {
-        // #swagger.tags = ['User']
+        // #swagger.tags = ['Authentication']
         try {
             const { email, newPassword } = req.body;
 
@@ -180,4 +180,42 @@ export class userController {
             res.status(500).json({ status: 'fail', message: 'Internal server error' });
         }
     }
+    
+    public static async updateProfile(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { userId } = req.body;
+            const profile_pic = req.file;
+            console.log(userId);
+            console.log(profile_pic);
+            
+    
+            if (!profile_pic) {
+                return res.status(400).json({ status: 'fail', message: 'Profile picture is required' });
+            }
+            const response = await userService.updateProfilePic(userId, profile_pic);
+            res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+            res.status(500).json({ status: 'fail', message: 'Internal server error' });
+        }
+    }
+    public static async getProfile(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { userId } = req.query;
+            const response = await userService.getProfile(userId);
+            res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+            res.status(500).json({ status: 'fail', message: 'Internal server error' });
+        }
+    }
+    
 }
