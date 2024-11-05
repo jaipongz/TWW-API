@@ -89,6 +89,50 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    
+    public static async createChat(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const {novelId,chapterName,order} = req.query;
+            const response = await novelService.createChatChapter(novelId,chapterName,order);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
+    public static async message(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const {chapterId ,sender,type,content,timestamp} = req.query;
+            const response = await novelService.createMessage(chapterId ,sender,type,content,timestamp);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
+    public static async updateMessage(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { messageId } = req.params;
+            const {sender,content,timestamp} = req.query;
+            const response = await novelService.updateMessage(messageId,sender,content,timestamp);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
 
     
 }

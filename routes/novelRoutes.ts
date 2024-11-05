@@ -3,7 +3,6 @@ const novelRouter = express.Router();
 const multer = require('multer');
 const path = require('path');
 import { verifyToken } from '../Middleware/authMiddleware';
-const authMiddleware = require("../Middleware/authMiddleware");
 import { novelController } from '../controllers/novelController';
 
 const storage = multer.diskStorage({
@@ -37,4 +36,9 @@ novelRouter.get('/api/novel/getNovelDetail/:novelId', novelController.getNovelDe
 novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelController.destroyNovel);
 novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
 novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
+
+
+novelRouter.post('/api/novel/chapterChat',novelController.createChat);
+novelRouter.post('/api/novel/chat/massage',novelController.message);
+novelRouter.put('/api/novel/chat/massage/:messageId',novelController.updateMessage);
 export { novelRouter };

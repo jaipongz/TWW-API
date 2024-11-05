@@ -244,12 +244,44 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
   }
 };
 
-
+const createChatChapter = async (novelId,chapterName,order) =>{
+  try {
+    console.log(novelId);
+    
+    const [result] = await db.query('INSERT INTO chapter_chat (novel_id, chapter_name, `order`) VALUES (?, ?, ?)', [novelId, chapterName, order]);
+    return { chapterId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
+const createMessage = async (chapterId ,sender,type,content,timestamp) =>{
+  try {
+    const [result] = await db.query('INSERT INTO messages (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, type, content, timestamp]);
+    return { messageId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
+const updateMessage = async (messageId ,sender,content,timestamp) =>{
+  try {
+    const sql = `UPDATE messages SET sender = ?,content = ?,timestamp = ? WHERE id = ?`;
+    const [result] = await db.query(sql, [sender,content, timestamp,messageId ]);
+    return { messageId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
 
 module.exports = {
   createNovel,
   getNovels,
   updateNovel,
   getNovelDetail,
-  destroyNovel
+  destroyNovel,
+  createChatChapter,
+  createMessage,
+  updateMessage
 };

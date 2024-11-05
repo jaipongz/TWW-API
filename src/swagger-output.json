@@ -745,6 +745,136 @@
         ]
       }
     },
+    "/api/novel/chapterChat": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "novelId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "chapterName",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/chat/massage": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "chapterId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sender",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/chat/massage/{messageId}": {
+      "put": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sender",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/comments": {
       "post": {
         "tags": [
