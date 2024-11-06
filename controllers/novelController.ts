@@ -133,6 +133,21 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    
+    public static async deleteMessage(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { messageId } = req.params;
+            const response = await novelService.deleteMessage(messageId);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
 
     
 }

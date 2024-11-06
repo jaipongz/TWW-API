@@ -41,4 +41,6 @@ novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescC
 novelRouter.post('/api/novel/chapterChat',novelController.createChat);
 novelRouter.post('/api/novel/chat/massage',novelController.message);
 novelRouter.put('/api/novel/chat/massage/:messageId',novelController.updateMessage);
+novelRouter.delete('/api/novel/chat/massage/:messageId',novelController.deleteMessage);
+
 export { novelRouter };

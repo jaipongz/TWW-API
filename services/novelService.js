@@ -25,7 +25,6 @@ const createNovel = async (
     console.error("Novel creation failed");
   }
 };
-
 const updateNovel = async (
   novelId,
   novelName,
@@ -98,7 +97,6 @@ const updateNovel = async (
     console.error("Novel update failed");
   }
 };
-
 const getNovels = async (keyword, start = 0, limit = 10) => {
   try {
     let sql = `SELECT * FROM novel `;
@@ -146,9 +144,6 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     console.error("Novel fetching failed");
   }
 };
-
-
-
 const destroyNovel = async (novelId) => {
   try {
     const sqlGet = `SELECT novel_id, type, novel_propic FROM novel WHERE novel_id = ?`;
@@ -192,10 +187,6 @@ const destroyNovel = async (novelId) => {
     throw new Error("Novel deletion failed");
   }
 };
-
-
-
-
 const getNovelDetail = async (novelId, start = 0, limit = 10) => {
   try {
     const offset = parseInt(start, 10);
@@ -243,7 +234,6 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
     console.error("Novel detail fetching failed");
   }
 };
-
 const createChatChapter = async (novelId,chapterName,order) =>{
   try {
     console.log(novelId);
@@ -257,7 +247,7 @@ const createChatChapter = async (novelId,chapterName,order) =>{
 }
 const createMessage = async (chapterId ,sender,type,content,timestamp) =>{
   try {
-    const [result] = await db.query('INSERT INTO messages (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, type, content, timestamp]);
+    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, type, content, timestamp]);
     return { messageId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
@@ -266,7 +256,7 @@ const createMessage = async (chapterId ,sender,type,content,timestamp) =>{
 }
 const updateMessage = async (messageId ,sender,content,timestamp) =>{
   try {
-    const sql = `UPDATE messages SET sender = ?,content = ?,timestamp = ? WHERE id = ?`;
+    const sql = `UPDATE message_draft SET sender = ?,content = ?,timestamp = ? WHERE draft_id = ?`;
     const [result] = await db.query(sql, [sender,content, timestamp,messageId ]);
     return { messageId: result.insertId };
   } catch (error) {
@@ -274,6 +264,16 @@ const updateMessage = async (messageId ,sender,content,timestamp) =>{
     throw new Error("Novel create chat failed");
   }
 }
+const deleteMessage = async (messageId) => {
+  try {
+    const sql = `DELETE FROM message_draft WHERE draft_id = ?`;
+    const [result] = await db.query(sql, [messageId]);
+    return { messageId };
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    throw new Error("Message deletion failed");
+  }
+};
 
 module.exports = {
   createNovel,
@@ -283,5 +283,6 @@ module.exports = {
   destroyNovel,
   createChatChapter,
   createMessage,
-  updateMessage
+  updateMessage,
+  deleteMessage
 };
