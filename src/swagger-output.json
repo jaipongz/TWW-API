@@ -479,6 +479,15 @@
                 "type": {
                   "example": "any"
                 },
+                "mainGroup": {
+                  "example": "any"
+                },
+                "subGroup1": {
+                  "example": "any"
+                },
+                "subGroup2": {
+                  "example": "any"
+                },
                 "tag": {
                   "example": "any"
                 },
@@ -657,6 +666,15 @@
                   "example": "any"
                 },
                 "type": {
+                  "example": "any"
+                },
+                "mainGroup": {
+                  "example": "any"
+                },
+                "subGroup1": {
+                  "example": "any"
+                },
+                "subGroup2": {
                   "example": "any"
                 },
                 "tag": {
@@ -893,6 +911,42 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/mainGroup": {
+      "get": {
+        "tags": [
+          "Communication"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/subGroup": {
+      "get": {
+        "tags": [
+          "Communication"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         },
         "security": [

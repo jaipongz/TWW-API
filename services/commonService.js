@@ -56,6 +56,24 @@ const getCommentsByChapter = async (chapterId) => {
     
   }
 };
+const mainGroup = async () => {
+  try {
+    const [rows] = await db.query(`SELECT * FROM main_group`);
+    return rows;
+  } catch (rows) {
+    throw new Error("Failed to get comment");
+    
+  }
+};
+const subGroup = async () => {
+  try {
+    const [rows] = await db.query(`SELECT * FROM sub_group`);
+    return rows;
+  } catch (rows) {
+    throw new Error("Failed to get comment");
+    
+  }
+};
 
 // async addLike(novelId, chapterId, userId) {
 //   return await db.query(
@@ -108,5 +126,7 @@ module.exports = {
   deleteComment,
   getCommentsByNovel,
   getCommentsByChapter,
-  updateComment
+  updateComment,
+  mainGroup,
+  subGroup
 };

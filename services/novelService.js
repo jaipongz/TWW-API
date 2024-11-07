@@ -6,7 +6,7 @@ const createNovel = async (
   novelName,
   penName,
   group,
-  type,
+  type,mainGroup,subGroup1,subGroup2,
   tag,
   rate,
   desc,
@@ -16,8 +16,8 @@ const createNovel = async (
   try {
     const proPic = novel_propic.path;
     await db.query(
-      "INSERT INTO novel (novel_name, pen_name, novel_group, type, tag, rate, novel_desc, novel_propic, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [novelName, penName, group, type, tag, rate, desc, proPic, userId]
+      "INSERT INTO novel (novel_name, pen_name, novel_group, type,main_group,sub_group1,sub_group2, tag, rate, novel_desc, novel_propic, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, proPic, userId]
     );
     return `Create Novel successful`;
   } catch (error) {
@@ -30,7 +30,7 @@ const updateNovel = async (
   novelName,
   penName,
   group,
-  type,
+  type,mainGroup,subGroup1,subGroup2,
   tag,
   rate,
   desc,
@@ -58,6 +58,18 @@ const updateNovel = async (
     if (type) {
       updateFields.push("type = ?");
       updateValues.push(type);
+    }
+    if (mainGroup) {
+      updateFields.push("main_group = ?");
+      updateValues.push(mainGroup);
+    }
+    if (subGroup1) {
+      updateFields.push("sub_group1 = ?");
+      updateValues.push(subGroup1);
+    }
+    if (subGroup2) {
+      updateFields.push("sub_group2 = ?");
+      updateValues.push(subGroup2);
     }
     if (tag) {
       updateFields.push("tag = ?");

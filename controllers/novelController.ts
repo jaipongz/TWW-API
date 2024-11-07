@@ -9,9 +9,10 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const { novelName, penName, group, type, tag, rate, desc,userId } = req.body;
+            const { novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc,userId } = req.body;
             const novel_propic = req.file;
-            const response = await novelService.createNovel(novelName, penName, group, type, tag, rate, desc, novel_propic,userId);
+            const response = await novelService.createNovel(novelName, penName, group, type, mainGroup,subGroup1,
+            subGroup2,tag, rate, desc, novel_propic,userId);
             return res.status(200).json({ status: 'success',data: response, message: 'Create novel successfully' });
         } catch (e) {
             return res.status(500).json({ status: 'fail', message: e });
@@ -50,10 +51,10 @@ export class novelController {
         }] */
         try {
             const novelId = req.params.novelId;
-            const { novelName, penName, group, type, tag, rate, desc, userId } = req.body;
+            const { novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, userId } = req.body;
             const novel_propic = req.file;
             const updatedNovel = await novelService.updateNovel(
-                novelId, novelName, penName, group, type, tag, rate, desc, novel_propic, userId
+                novelId, novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, novel_propic, userId
             );
             return res.status(200).json({ status: 'success', data: updatedNovel, message: 'Novel updated successfully' });
         } catch (e) {

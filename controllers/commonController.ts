@@ -93,6 +93,26 @@ export class commonController {
             res.status(200).json({ status: 'success', data: response });
         }
     }
+    public static async mainGroup(req: Request, res: Response) {
+        // #swagger.tags = ['Communication']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        const response = await commonService.mainGroup();
+        if (response) {
+            res.status(200).json({ status: 'success', data: response });
+        }
+    }
+    public static async subGroup(req: Request, res: Response) {
+        // #swagger.tags = ['Communication']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        const response = await commonService.subGroup();
+        if (response) {
+            res.status(200).json({ status: 'success', data: response });
+        }
+    }
 
     // public static async addLike(req: Request, res: Response) {
     //     // #swagger.tags = ['Communication']

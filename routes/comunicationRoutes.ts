@@ -4,6 +4,9 @@ import { verifyToken } from '../Middleware/authMiddleware';
 
 const commonRouter = express.Router();
 
+commonRouter.get('/mainGroup',commonController.mainGroup);
+commonRouter.get('/subGroup',commonController.subGroup);
+
 commonRouter.post('/comments',commonController.postComment);
 commonRouter.delete('/comments/:commentId',  commonController.deleteComment);
 commonRouter.put('/comments/:commentId', commonController.updateComment);
