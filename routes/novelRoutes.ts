@@ -13,9 +13,32 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
+const charactor = multer.diskStorage({
+    destination: function (req:any, file:any, cb:any) {
+        cb(null, 'src/storage/charactor');
+    },
+    filename: function (req:any, file:any, cb:any) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
 
 const upload = multer({
     storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 },
+    fileFilter: (req:any, file:any, cb:any) => {
+        const fileTypes = /jpeg|jpg|png/;
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = fileTypes.test(file.mimetype);
+
+        if (mimeType && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only images are allowed'));
+        }
+    }
+});
+const uploadCharPic = multer({
+    storage: charactor,
     limits: { fileSize: 1024 * 1024 * 5 },
     fileFilter: (req:any, file:any, cb:any) => {
         const fileTypes = /jpeg|jpg|png/;
@@ -37,8 +60,8 @@ novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelControll
 novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
 novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
 
-novelRouter.post('/api/novel/Charactor',verifyToken,upload.single('charPic'),novelController.createDescChapter);
-novelRouter.put('/api/novel/Charactor/:charId',verifyToken,upload.single('charPic'),novelController.createDescChapter);
+novelRouter.post('/api/novel/Charactor',verifyToken,uploadCharPic.single('charPic'),novelController.createChar);
+novelRouter.put('/api/novel/Charactor/:charId',verifyToken,uploadCharPic.single('charPic'),novelController.createDescChapter);
 
 
 novelRouter.post('/api/novel/chapterChat',novelController.createChat);
