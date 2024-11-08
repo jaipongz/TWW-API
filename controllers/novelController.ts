@@ -149,6 +149,20 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    public static async createChar(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { novel_id, name, role } = req.body;
+            const charPic = req.file;
+            const response = await novelService.createChar( novel_id, name, role,charPic);
+            return res.status(200).json({ status: 'success',data: response, message: 'Create charactor successfully' });
+        } catch (e) {
+            return res.status(500).json({ status: 'fail', message: e });
+        }
+    }
 
     
 }

@@ -287,6 +287,19 @@ const deleteMessage = async (messageId) => {
   }
 };
 
+const createChar = async (novel_id, name, role, charPic) => {
+  try {
+    const imagePath = charPic.path; 
+    const sql = `INSERT INTO characters (novel_id, name, role, image_path) VALUES (?, ?, ?, ?)`;
+    const [result] = await db.query(sql, [novel_id, name, role, imagePath]);
+    
+    return { characterId: result.insertId };
+  } catch (error) {
+    console.error("Error inserting character:", error);
+    throw new Error("Character creation failed");
+  }
+};
+
 module.exports = {
   createNovel,
   getNovels,
@@ -296,5 +309,6 @@ module.exports = {
   createChatChapter,
   createMessage,
   updateMessage,
-  deleteMessage
+  deleteMessage,
+  createChar
 };

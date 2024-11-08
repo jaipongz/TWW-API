@@ -37,6 +37,9 @@ novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelControll
 novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
 novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
 
+novelRouter.post('/api/novel/Charactor',verifyToken,upload.single('charPic'),novelController.createDescChapter);
+novelRouter.put('/api/novel/Charactor/:charId',verifyToken,upload.single('charPic'),novelController.createDescChapter);
+
 
 novelRouter.post('/api/novel/chapterChat',novelController.createChat);
 novelRouter.post('/api/novel/chat/massage',novelController.message);
