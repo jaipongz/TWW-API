@@ -71,7 +71,6 @@ const subGroup = async () => {
     return rows;
   } catch (rows) {
     throw new Error("Failed to get comment");
-    
   }
 };
 

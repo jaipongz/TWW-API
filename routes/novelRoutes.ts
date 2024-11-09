@@ -21,7 +21,6 @@ const charactor = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
-
 const upload = multer({
     storage: storage,
     limits: { fileSize: 1024 * 1024 * 5 },
@@ -60,8 +59,11 @@ novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelControll
 novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
 novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
 
-novelRouter.post('/api/novel/Charactor',verifyToken,uploadCharPic.single('charPic'),novelController.createChar);
-novelRouter.put('/api/novel/Charactor/:charId',verifyToken,uploadCharPic.single('charPic'),novelController.createDescChapter);
+novelRouter.post('/api/novel/charactor',verifyToken,uploadCharPic.single('charPic'),novelController.createChar);
+novelRouter.put('/api/novel/charactor/:charId',verifyToken,uploadCharPic.single('charPic'),novelController.updateChar);
+novelRouter.delete('/api/novel/charactor/:charId',verifyToken,novelController.deleteChar);
+novelRouter.get('/api/novel/charactor/:charId',verifyToken,novelController.getCharById);
+novelRouter.get('/api/novel/allCharactor/:novelId',verifyToken,novelController.getAllChar);
 
 
 novelRouter.post('/api/novel/chapterChat',novelController.createChat);

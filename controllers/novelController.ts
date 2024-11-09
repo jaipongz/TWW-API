@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 const novelService = require('../services/novelService');
-
+const fs = require('fs').promises;
 export class novelController {
 
     public static async createNovel(req: Request, res: Response) {
@@ -163,6 +163,83 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: e });
         }
     }
-
     
+    public static async updateChar(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+          const charId = req.params.charId;
+          const {  name, role } = req.body;
+          const charPic = req.file;
+    
+          const response = await novelService.updateChar(charId, name, role, charPic);
+    
+          if (response.affectedRows > 0) {
+            return res.status(200).json({ status: 'success', message: 'Character updated successfully' });
+          } else {
+            return res.status(404).json({ status: 'fail', message: 'Character not found' });
+          }
+        } catch (error) {
+          return res.status(500).json({ status: 'fail', message: error });
+        }
+      }
+   
+      public static async deleteChar(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+          const charId = req.params.charId;
+          const response = await novelService.deleteChar(charId);
+          if (response.affectedRows > 0) {
+            return res.status(200).json({ status: 'success', message: 'Character deleted successfully' });
+          } else {
+            return res.status(404).json({ status: 'fail', message: 'Character not found' });
+          }
+        } catch (error) {
+          return res.status(500).json({ status: 'fail', message: error});
+        }
+      }
+
+      public static async getCharById(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const charId = req.params.charId;
+            const character = await novelService.getCharById(charId);
+    
+            if (character) {
+                return res.status(200).json({ status: 'success', data: character });
+            } else {
+                return res.status(404).json({ status: 'fail', message: 'Character not found' });
+            }
+        } catch (error) {
+            console.error("Error fetching character by ID:", error);
+            return res.status(500).json({ status: 'fail', message: 'Character retrieval failed' });
+        }
+    }
+      public static async getAllChar(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const novelId = req.params.novelId;
+            const character = await novelService.getAllChar(novelId);
+    
+            if (character) {
+                return res.status(200).json({ status: 'success', data: character });
+            } else {
+                return res.status(404).json({ status: 'fail', message: 'Character not found' });
+            }
+        } catch (error) {
+            console.error("Error fetching character by ID:", error);
+            return res.status(500).json({ status: 'fail', message: 'Character retrieval failed' });
+        }
+    }
 }

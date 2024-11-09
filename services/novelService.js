@@ -286,7 +286,6 @@ const deleteMessage = async (messageId) => {
     throw new Error("Message deletion failed");
   }
 };
-
 const createChar = async (novel_id, name, role, charPic) => {
   try {
     const imagePath = charPic.path; 
@@ -297,6 +296,88 @@ const createChar = async (novel_id, name, role, charPic) => {
   } catch (error) {
     console.error("Error inserting character:", error);
     throw new Error("Character creation failed");
+  }
+};
+const updateChar = async (characterId,name, role, charPic) => {
+  try {
+    let sql = `UPDATE characters SET name = ?, role = ?`;
+    const params = [name, role];
+    if (charPic) {
+      sql += `, image_path = ?`;
+      params.push(charPic.path);
+    }
+    sql += ` WHERE id = ?`;
+    params.push(characterId);
+    const [result] = await db.query(sql, params);
+    return { affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("Error updating character:", error);
+    throw new Error("Character update failed");
+  }
+};
+const deleteChar = async (characterId) => {
+  try {
+    console.log("Attempting to delete character with ID:", characterId);
+    const [character] = await db.query('SELECT image_path FROM characters WHERE id = ?', [characterId]);
+    if (!character || character.length === 0) {
+      throw new Error('Character not found');
+    }
+    const imagePath = character[0].image_path;
+    const fullPath = path.resolve(__dirname, '../src/storage/charactor', imagePath.split('\\').pop()); // Adjust path as necessary
+    fs.unlink(fullPath, (err) => {
+      if (err) {
+        console.error(`Failed to delete image file: ${fullPath}`, err);
+      } else {
+        console.log(`Image file deleted successfully: ${fullPath}`);
+      }
+    });
+    const [result] = await db.query('DELETE FROM characters WHERE id = ?', [characterId]);
+    // console.log("Deletion result:", result);
+    return { affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("Error deleting character:", error);
+    throw new Error("Character deletion failed");
+  }
+};
+const getCharById = async (characterId) => {
+  try {
+    const sql = `SELECT * FROM characters WHERE id = ?`;
+    const [result] = await db.query(sql, [characterId]);
+
+    if (result.length > 0) {
+      const character = result[0];
+      character.image_path = character.image_path
+        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/charactor/${character.image_path.split("\\").pop()}`
+        : null;
+      return character;
+    } else {
+      throw new Error('Character not found');
+    }
+  } catch (error) {
+    console.error("Error retrieving character:", error);
+    throw new Error("Character retrieval failed");
+  }
+};
+const getAllChar = async (novelId) => {
+  try {
+    const sql = `SELECT * FROM characters WHERE novel_id = ?`;
+    const [characters] = await db.query(sql, [novelId]);
+
+    if (characters.length > 0) {
+      const mappedCharacters = characters.map((character) => ({
+        ...character,
+        image_path: character.image_path
+          ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/charactor/${character.image_path.split("\\").pop()}`
+          : null,
+      }));
+      return {status: "success",data: mappedCharacters,
+      };
+    } else {
+      return {status: "fail", message: "No characters found for the given novel ID"};
+    }
+  } catch (error) {
+    console.error("Error retrieving characters:", error);
+    throw new Error("Character retrieval failed");
   }
 };
 
@@ -310,5 +391,9 @@ module.exports = {
   createMessage,
   updateMessage,
   deleteMessage,
-  createChar
+  createChar,
+  updateChar,
+  deleteChar,
+  getCharById,
+  getAllChar
 };
