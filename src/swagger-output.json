@@ -1054,11 +1054,6 @@
             "type": "string"
           },
           {
-            "name": "type",
-            "in": "query",
-            "type": "string"
-          },
-          {
             "name": "content",
             "in": "query",
             "type": "string"
@@ -1135,6 +1130,76 @@
         "parameters": [
           {
             "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/chat/media": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "chapterId": {
+                  "example": "any"
+                },
+                "sender": {
+                  "example": "any"
+                },
+                "timestamp": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/chat/save/{chapterId}": {
+      "post": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "chapterId",
             "in": "path",
             "required": true,
             "type": "string"

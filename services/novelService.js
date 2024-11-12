@@ -257,35 +257,6 @@ const createChatChapter = async (novelId,chapterName,order) =>{
     throw new Error("Novel create chat failed");
   }
 }
-const createMessage = async (chapterId ,sender,type,content,timestamp) =>{
-  try {
-    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, type, content, timestamp]);
-    return { messageId: result.insertId };
-  } catch (error) {
-    console.error("Error create chat:", error);
-    throw new Error("Novel create chat failed");
-  }
-}
-const updateMessage = async (messageId ,sender,content,timestamp) =>{
-  try {
-    const sql = `UPDATE message_draft SET sender = ?,content = ?,timestamp = ? WHERE draft_id = ?`;
-    const [result] = await db.query(sql, [sender,content, timestamp,messageId ]);
-    return { messageId: result.insertId };
-  } catch (error) {
-    console.error("Error create chat:", error);
-    throw new Error("Novel create chat failed");
-  }
-}
-const deleteMessage = async (messageId) => {
-  try {
-    const sql = `DELETE FROM message_draft WHERE draft_id = ?`;
-    const [result] = await db.query(sql, [messageId]);
-    return { messageId };
-  } catch (error) {
-    console.error("Error deleting message:", error);
-    throw new Error("Message deletion failed");
-  }
-};
 const createChar = async (novel_id, name, role, charPic) => {
   try {
     const imagePath = charPic.path; 
@@ -380,6 +351,88 @@ const getAllChar = async (novelId) => {
     throw new Error("Character retrieval failed");
   }
 };
+const createMessage = async (chapterId ,sender,content,timestamp) =>{
+  try {
+    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'text', content, timestamp]);
+    return { messageId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
+const updateMessage = async (messageId ,sender,content,timestamp) =>{
+  try {
+    const sql = `UPDATE message_draft SET sender = ?,content = ?,timestamp = ? WHERE draft_id = ?`;
+    const [result] = await db.query(sql, [sender,content, timestamp,messageId ]);
+    return { messageId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
+const deleteMessage = async (messageId) => {
+  try {
+    const sql = `DELETE FROM message_draft WHERE draft_id = ?`;
+    const [result] = await db.query(sql, [messageId]);
+    return { messageId };
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    throw new Error("Message deletion failed");
+  }
+};
+const addMedia = async (chapterId ,sender,media,timestamp) =>{
+  try {
+    const mediaPath = media.path; 
+    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'media', mediaPath, timestamp]);
+    return { messageId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chat failed");
+  }
+}
+
+const deleteAllDrftByChaapterId = async (chapterId) => {
+  try {
+    const sql = `DELETE FROM message_draft WHERE chapter_id = ?`;
+    const [result] = await db.query(sql, [chapterId]);
+    return { deletedCount: result.affectedRows };
+  } catch (error) {
+    console.error("Error deleting drafts:", error);
+    throw new Error("Draft deletion failed");
+  }
+};
+
+// ย้ายข้อความจาก message_draft ไปยังตารางหลักและลบข้อมูลใน draft
+const saveDraftToMainMessage = async (chapterId) => {
+  try {
+    // ดึงข้อมูลทั้งหมดจาก message_draft ตาม chapterId
+    const selectSql = `SELECT * FROM message_draft WHERE chapter_id = ?`;
+    const [draftMessages] = await db.query(selectSql, [chapterId]);
+
+    if (draftMessages.length === 0) {
+      throw new Error("No drafts found for this chapter");
+    }
+
+    // เพิ่มข้อมูลลงในตารางหลัก (main_message)
+    const insertSql = `INSERT INTO messages (chapter_id, sender, message_type, content, timestamp) VALUES ?`;
+    const values = draftMessages.map((msg) => [
+      msg.chapter_id,
+      msg.sender,
+      msg.message_type,
+      msg.content,
+      msg.timestamp, ]);
+    await db.query(insertSql, [values]);
+
+    // ลบข้อมูลใน message_draft หลังจากย้ายไปตารางหลักแล้ว
+    const deleteSql = `DELETE FROM message_draft WHERE chapter_id = ?`;
+    await db.query(deleteSql, [chapterId]);
+
+    return { status: "success", message: "Drafts saved and cleared successfully" };
+  } catch (error) {
+    console.error("Error saving drafts to main message:", error);
+    throw new Error("Failed to save drafts to main message");
+  }
+};
 
 module.exports = {
   createNovel,
@@ -391,9 +444,12 @@ module.exports = {
   createMessage,
   updateMessage,
   deleteMessage,
+  addMedia,
   createChar,
   updateChar,
   deleteChar,
   getCharById,
-  getAllChar
+  getAllChar,
+  saveDraftToMainMessage,
+  deleteAllDrftByChaapterId,
 };

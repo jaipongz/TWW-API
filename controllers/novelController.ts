@@ -111,8 +111,8 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const {chapterId ,sender,type,content,timestamp} = req.query;
-            const response = await novelService.createMessage(chapterId ,sender,type,content,timestamp);
+            const {chapterId ,sender,content,timestamp} = req.query;
+            const response = await novelService.createMessage(chapterId ,sender,content,timestamp);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);
@@ -143,6 +143,37 @@ export class novelController {
         try {
             const { messageId } = req.params;
             const response = await novelService.deleteMessage(messageId);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
+    public static async media(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const {chapterId} = req.body;
+            const {sender} = req.body;
+            const {timestamp} = req.body;
+            const media = req.file;
+            const response = await novelService.addMedia(chapterId ,sender,media,timestamp);
+            return res.status(200).json({ status: 'success', data: response });
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
+    public static async saveMessage(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const { chapterId } = req.params;
+            const response = await novelService.saveDraftToMainMessage(chapterId);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);

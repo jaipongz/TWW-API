@@ -12,7 +12,6 @@ const postComment = async (novelId, chapterId, userId, content) => {
     throw new Error("Failed to post comment");
   }
 };
-
 const updateComment = async (commentId, content) => {
   try {
     const result = await db.query(
@@ -25,7 +24,6 @@ const updateComment = async (commentId, content) => {
     throw new Error("Failed to update comment");
   }
 };
-
 const deleteComment = async (commentId) => {
   try {
     const result = await db.query(`DELETE FROM comments WHERE comment_id = ?`, [
@@ -37,7 +35,6 @@ const deleteComment = async (commentId) => {
     throw new Error("Failed to delete comment");
   }
 };
-
 const getCommentsByNovel = async (novelId) => {
   try {
     const [rows] = await db.query(`SELECT * FROM comments WHERE novel_id = ?`, [novelId]);
@@ -46,7 +43,6 @@ const getCommentsByNovel = async (novelId) => {
     throw new Error("Failed to get comment");
   }
 };
-
 const getCommentsByChapter = async (chapterId) => {
   try {
     const [rows] = await db.query(`SELECT * FROM comments WHERE chapter_id = ?`, [ chapterId]);

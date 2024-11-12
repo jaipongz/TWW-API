@@ -21,6 +21,14 @@ const charactor = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
+const media = multer.diskStorage({
+    destination: function (req:any, file:any, cb:any) {
+        cb(null, 'src/storage/media');
+    },
+    filename: function (req:any, file:any, cb:any) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
 const upload = multer({
     storage: storage,
     limits: { fileSize: 1024 * 1024 * 5 },
@@ -51,6 +59,18 @@ const uploadCharPic = multer({
         }
     }
 });
+const uploadMedia = multer({
+    storage: media,
+    limits: { fileSize: 1024 * 1024 * 5 },
+    fileFilter: (req:any, file:any, cb:any) => {
+        const mimeTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/mkv'];
+        if (mimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only images and videos are allowed'), false);
+        }
+    }
+});
 
 novelRouter.post('/api/novel/storeNovel',verifyToken,upload.single('novel_propic'), novelController.createNovel);
 novelRouter.get('/api/novel/getNovelList', novelController.getNovel);
@@ -70,5 +90,8 @@ novelRouter.post('/api/novel/chapterChat',novelController.createChat);
 novelRouter.post('/api/novel/chat/massage',novelController.message);
 novelRouter.put('/api/novel/chat/massage/:messageId',novelController.updateMessage);
 novelRouter.delete('/api/novel/chat/massage/:messageId',novelController.deleteMessage);
+novelRouter.post('/api/novel/chat/media',uploadMedia.single('media'),novelController.media);
+
+novelRouter.post('/api/novel/chat/save/:chapterId',novelController.saveMessage);
 
 export { novelRouter };
