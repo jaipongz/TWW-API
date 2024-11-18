@@ -499,6 +499,9 @@
                 },
                 "userId": {
                   "example": "any"
+                },
+                "status": {
+                  "example": "any"
                 }
               }
             }
@@ -1223,7 +1226,7 @@
     "/mainGroup": {
       "get": {
         "tags": [
-          "Communication"
+          "Global"
         ],
         "description": "",
         "responses": {
@@ -1241,7 +1244,7 @@
     "/subGroup": {
       "get": {
         "tags": [
-          "Communication"
+          "Global"
         ],
         "description": "",
         "responses": {

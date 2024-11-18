@@ -94,7 +94,7 @@ export class commonController {
         }
     }
     public static async mainGroup(req: Request, res: Response) {
-        // #swagger.tags = ['Communication']
+        // #swagger.tags = ['Global']
         /* #swagger.security = [{
             "Bearer": []
         }] */
@@ -104,7 +104,7 @@ export class commonController {
         }
     }
     public static async subGroup(req: Request, res: Response) {
-        // #swagger.tags = ['Communication']
+        // #swagger.tags = ['Global']
         /* #swagger.security = [{
             "Bearer": []
         }] */

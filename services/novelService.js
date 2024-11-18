@@ -11,13 +11,14 @@ const createNovel = async (
   rate,
   desc,
   novel_propic,
-  userId
+  userId,
+  status
 ) => {
   try {
     const proPic = novel_propic.path;
     await db.query(
-      "INSERT INTO novel (novel_name, pen_name, novel_group, type,main_group,sub_group1,sub_group2, tag, rate, novel_desc, novel_propic, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, proPic, userId]
+      "INSERT INTO novel (novel_name, pen_name, novel_group, type,main_group,sub_group1,sub_group2, tag, rate, novel_desc, novel_propic, user_id, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, proPic, userId,status]
     );
     return `Create Novel successful`;
   } catch (error) {

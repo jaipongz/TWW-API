@@ -48,7 +48,7 @@ const login = async (user_name, password) => {
       { expiresIn: "30d" }
     );
 
-    return { error: false, token };
+    return { error: false, token ,userId: user.user_id};
   } catch (error) {
     console.error("Error logging in user:", error);
     return {

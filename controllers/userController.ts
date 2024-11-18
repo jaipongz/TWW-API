@@ -39,7 +39,7 @@ export class userController {
                 return res.status(response.code).json({ status: 'fail', message: response.message });
             }
     
-            return res.status(200).json({ status: 'success', data: { token: response.token } });
+            return res.status(200).json({ status: 'success', data: { token: response.token,userId : response.userId } });
         } catch (e) {
             console.error("Error in login controller:", e);
             return res.status(500).json({ status: 'fail', message: 'Internal Server Error' });

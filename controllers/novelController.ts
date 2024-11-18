@@ -9,10 +9,10 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const { novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc,userId } = req.body;
+            const { novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc,userId ,status } = req.body;
             const novel_propic = req.file;
             const response = await novelService.createNovel(novelName, penName, group, type, mainGroup,subGroup1,
-            subGroup2,tag, rate, desc, novel_propic,userId);
+            subGroup2,tag, rate, desc, novel_propic,userId,status);
             return res.status(200).json({ status: 'success',data: response, message: 'Create novel successfully' });
         } catch (e) {
             return res.status(500).json({ status: 'fail', message: e });
