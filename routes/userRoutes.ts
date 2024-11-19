@@ -34,6 +34,7 @@ userRouter.post('/register', userController.register);
 userRouter.post('/login', userController.login);
 userRouter.post('/logout', verifyToken, userController.logout);
 userRouter.get('/test', verifyToken, userController.test);
+userRouter.get('/decrypt', verifyToken, userController.testDecrypt);
 userRouter.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));

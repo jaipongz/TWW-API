@@ -48,7 +48,7 @@ const login = async (user_name, password) => {
       { expiresIn: "30d" }
     );
 
-    return { error: false, token ,userId: user.user_id};
+    return { error: false, token, userId: user.user_id };
   } catch (error) {
     console.error("Error logging in user:", error);
     return {
@@ -128,11 +128,11 @@ const checkUsername = async (userName) => {
 const getProfile = async (userId) => {
   try {
     const sql = `SELECT user_name, user_email, user_profile FROM users WHERE user_id = ?`;
-    
+
     const [rows] = await db.query(sql, [userId]);
-    
+
     if (rows.length === 0) {
-      return null; 
+      return null;
     }
 
     const result = rows[0];
@@ -155,7 +155,7 @@ const updateProfilePic = async (userId, profile_pic) => {
   try {
     const proPic = profile_pic.path;
     const sql = `UPDATE users SET user_profile = ? WHERE user_id = ?`;
-    await db.query(sql, [proPic,userId], (error, results) => {
+    await db.query(sql, [proPic, userId], (error, results) => {
       if (error) {
         console.log('Error update profile:', error);
       } else {
@@ -164,6 +164,18 @@ const updateProfilePic = async (userId, profile_pic) => {
       }
     });
   } catch (error) {
+    throw error;
+  }
+};
+const decrypt = async (userData) => {
+  try {
+      if (userData && typeof userData === "object" && "id" in userData) {
+        return userData.id;
+      } else {
+        throw new Error("Invalid user data: 'id' property is missing.");
+      }
+  } catch (error) {
+    console.error("Error in decrypt function:", error.message);
     throw error;
   }
 };
@@ -177,4 +189,5 @@ module.exports = {
   checkUsername,
   updateProfilePic,
   getProfile,
+  decrypt,
 };

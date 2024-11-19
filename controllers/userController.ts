@@ -34,12 +34,12 @@ export class userController {
         try {
             const { username, password } = req.body;
             const response = await userService.login(username, password);
-    
+
             if (response.error) {
                 return res.status(response.code).json({ status: 'fail', message: response.message });
             }
-    
-            return res.status(200).json({ status: 'success', data: { token: response.token,userId : response.userId } });
+
+            return res.status(200).json({ status: 'success', data: { token: response.token, userId: response.userId } });
         } catch (e) {
             console.error("Error in login controller:", e);
             return res.status(500).json({ status: 'fail', message: 'Internal Server Error' });
@@ -60,9 +60,16 @@ export class userController {
         /* #swagger.security = [{
             "Bearer": []
         }] */
+        const userData = req.user; 
+        const result = await userService.decrypt(userData);
+        console.log(result);
 
-        // This endpoint is protected by the authMiddleware
-        res.status(200).json({ status: 'success', message: 'Authenticated!!!' });
+        res.status(200).json({
+            status: "success",
+            message: "Authenticated!",
+            data: { result, userData },
+        });
+        // res.status(200).json({ status: 'success', message: 'Authenticated!!!' ,data:userData});
     }
 
     public static async forgot(req: Request, res: Response) {
@@ -92,7 +99,7 @@ export class userController {
             return res.status(500).json({ status: 'error', message: 'Internal server error' });
         }
     }
-    
+
     public static async verifyEmail(req: Request, res: Response) {
         // #swagger.tags = ['Authentication']
         try {
@@ -106,13 +113,12 @@ export class userController {
             if (emailCheck) {
                 return res.status(409).json({ status: 'fail', message: `Email ${email} is already in use` });
             }
-            
-            const otp = otpService.generateOTP();
 
+            const otp = otpService.generateOTP();
             await otpService.sendOtp(email, otp);
             await otpService.saveOTP(email, otp);
 
-            return res.status(200).json({ status: 'success',data:email, message: 'OTP sent to your email' });
+            return res.status(200).json({ status: 'success', data: email, message: 'OTP sent to your email' });
 
         } catch (error) {
             console.error('Error in forgot function:', error);
@@ -170,7 +176,7 @@ export class userController {
             return res.status(500).json({ status: 'error', message: 'Internal server error. Please try again later.' });
         }
     }
-    
+
     public static async genToken(req: Request, res: Response) {
         // #swagger.tags = ['Global']
         try {
@@ -180,7 +186,7 @@ export class userController {
             res.status(500).json({ status: 'fail', message: 'Internal server error' });
         }
     }
-    
+
     public static async updateProfile(req: Request, res: Response) {
         // #swagger.tags = ['User']
         /* #swagger.security = [{
@@ -191,8 +197,8 @@ export class userController {
             const profile_pic = req.file;
             console.log(userId);
             console.log(profile_pic);
-            
-    
+
+
             if (!profile_pic) {
                 return res.status(400).json({ status: 'fail', message: 'Profile picture is required' });
             }
@@ -217,5 +223,26 @@ export class userController {
             res.status(500).json({ status: 'fail', message: 'Internal server error' });
         }
     }
-    
+    public static async testDecrypt(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            // console.log(req);
+            const authHeader = req.headers['authorization'];
+
+            if (!authHeader) {
+                return res.status(400).json({ status: "error", message: "Authorization header is missing" });
+            }
+
+            const result = userService.decrypt(authHeader);
+
+            res.status(200).json({ status: "success", data: result });
+        } catch (error) {
+            console.error("Error verifying token:", error);
+            res.status(500).json({ status: "fail", message: "Internal server error" });
+        }
+    }
+
 }
