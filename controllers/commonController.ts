@@ -28,27 +28,27 @@ export class commonController {
     }
 
     public static async updateComment(req: Request, res: Response) {
-         // #swagger.tags = ['Communication']
+        // #swagger.tags = ['Communication']
         /* #swagger.security = [{
             "Bearer": []
         }] */
         try {
-          const { commentId } = req.params;
-          const { content } = req.body;
-          if (!content) {
-             res.status(400).json({ status: 'fail', message: 'Content is required to update the comment' });
-          }
-          const [response] = await commonService.updateComment(commentId, content);
-          if (response.affectedRows > 0) {
-            res.status(200).json({ status: 'success', message: "Comment updated successfully" });
-          } else {
-            res.status(404).json({ status: 'fail', message: "Comment not found" });
-          }
+            const { commentId } = req.params;
+            const { content } = req.body;
+            if (!content) {
+                res.status(400).json({ status: 'fail', message: 'Content is required to update the comment' });
+            }
+            const [response] = await commonService.updateComment(commentId, content);
+            if (response.affectedRows > 0) {
+                res.status(200).json({ status: 'success', message: "Comment updated successfully" });
+            } else {
+                res.status(404).json({ status: 'fail', message: "Comment not found" });
+            }
         } catch (error) {
-          console.error("Error updating comment:", error);
-          res.status(500).json({ status: 'error', message: 'An unexpected error occurred while updating the comment' });
+            console.error("Error updating comment:", error);
+            res.status(500).json({ status: 'error', message: 'An unexpected error occurred while updating the comment' });
         }
-      }
+    }
 
     public static async deleteComment(req: Request, res: Response) {
         // #swagger.tags = ['Communication']
@@ -117,17 +117,23 @@ export class commonController {
         }
     }
 
-    // public static async addLike(req: Request, res: Response) {
-    //     // #swagger.tags = ['Communication']
-    //     /* #swagger.security = [{
-    //         "Bearer": []
-    //     }] */
-    //     const { novelId, chapterId, userId } = req.body;
-    //     const result = await CommonService(CommonService.addLike, res, novelId, chapterId, userId);
-    //     if (result) {
-    //         res.status(201).json({ status: 'success', message: "Liked successfully" });
-    //     }
-    // }
+    public static async addLike(req: Request, res: Response) {
+        // #swagger.tags = ['Communication']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
+            const { novelId, chapterId } = req.body;
+            const result = await commonService.addLike(res, novelId, chapterId, userId);
+            if (result) {
+                res.status(201).json({ status: 'success', message: "Liked successfully" });
+            }
+        } catch (error) {
+            res.status(500).json({ status: 'error', message: error });
+        }
+    }
 
     // public static removeLike: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     //     // #swagger.tags = ['Communication']

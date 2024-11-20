@@ -45,11 +45,11 @@ const getCommentsByNovel = async (novelId) => {
 };
 const getCommentsByChapter = async (chapterId) => {
   try {
-    const [rows] = await db.query(`SELECT * FROM comments WHERE chapter_id = ?`, [ chapterId]);
+    const [rows] = await db.query(`SELECT * FROM comments WHERE chapter_id = ?`, [chapterId]);
     return rows;
   } catch (rows) {
     throw new Error("Failed to get comment");
-    
+
   }
 };
 const mainGroup = async () => {
@@ -58,7 +58,7 @@ const mainGroup = async () => {
     return rows;
   } catch (rows) {
     throw new Error("Failed to get comment");
-    
+
   }
 };
 const subGroup = async () => {
@@ -70,12 +70,23 @@ const subGroup = async () => {
   }
 };
 
-// async addLike(novelId, chapterId, userId) {
-//   return await db.query(
-//     `INSERT INTO likes (user_id, novel_id, chapter_id) VALUES (?, ?, ?)`,
-//     [userId, novelId, chapterId || null]
-//   );
-// },
+const addLike = async (novelId, chapterId, userId) => {
+  try {
+    if (!userId || !novelId) {
+      throw new Error('Missing required parameters: userId or novelId');
+    }
+
+    console.log('Inserting like with:', { userId, novelId, chapterId });
+
+    return await db.query(
+      `INSERT INTO likes (user_id, novel_id, chapter_id) VALUES (?, ?, ?)`,
+      [userId, novelId, chapterId || null]
+    );
+  } catch (error) {
+    console.error('Error in addLike:', error.message);
+    throw error; // Propagate the error to the controller for proper handling
+  }
+};
 
 // async removeLike(novelId, chapterId, userId) {
 //   return await db.query(
@@ -116,12 +127,13 @@ const subGroup = async () => {
 //   );
 // },
 
-module.exports = { 
-  postComment, 
+module.exports = {
+  postComment,
   deleteComment,
   getCommentsByNovel,
   getCommentsByChapter,
   updateComment,
   mainGroup,
-  subGroup
+  subGroup,
+  addLike
 };

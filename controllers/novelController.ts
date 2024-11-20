@@ -104,8 +104,8 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const { novelId, chapterName, order } = req.query;
-            const response = await novelService.createChatChapter(novelId, chapterName, order);
+            const { novelId, chapterName } = req.query;
+            const response = await novelService.createChatChapter(novelId, chapterName);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);

@@ -13,7 +13,7 @@ commonRouter.put('/comments/:commentId',verifyToken, commonController.updateComm
 commonRouter.get('/comments/novel/:novelId', commonController.getCommentsByNovel);
 commonRouter.get('/comments/chapter/:chapterId', commonController.getCommentsByChapter);
 
-// commonRouter.post('/likes',  commonController.addLike);
+commonRouter.post('/likes', verifyToken, commonController.addLike);
 // commonRouter.delete('/likes',  commonController.removeLike);
 // commonRouter.get('/likes/count/novel/:novelId', commonController.getLikeCountByNovel);
 // commonRouter.get('/likes/count/chapter/:chapterId', commonController.getLikeCountByChapter);

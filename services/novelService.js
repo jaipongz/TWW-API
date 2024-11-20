@@ -1,3 +1,4 @@
+const { log } = require("console");
 const db = require("../db");
 const fs = require('fs');
 const path = require('path');
@@ -6,7 +7,7 @@ const createNovel = async (
   novelName,
   penName,
   group,
-  type,mainGroup,subGroup1,subGroup2,
+  type, mainGroup, subGroup1, subGroup2,
   tag,
   rate,
   desc,
@@ -18,7 +19,7 @@ const createNovel = async (
     const proPic = novel_propic.path;
     await db.query(
       "INSERT INTO novel (novel_name, pen_name, novel_group, type,main_group,sub_group1,sub_group2, tag, rate, novel_desc, novel_propic, user_id, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [novelName, penName, group, type,mainGroup,subGroup1,subGroup2, tag, rate, desc, proPic, userId,status]
+      [novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, proPic, userId, status]
     );
     return `Create Novel successful`;
   } catch (error) {
@@ -31,7 +32,7 @@ const updateNovel = async (
   novelName,
   penName,
   group,
-  type,mainGroup,subGroup1,subGroup2,
+  type, mainGroup, subGroup1, subGroup2,
   tag,
   rate,
   desc,
@@ -139,9 +140,8 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${process.env.PORT
+        }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
 
@@ -157,10 +157,10 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     console.error("Novel fetching failed");
   }
 };
-const destroyNovel = async (novelId,userId) => {
+const destroyNovel = async (novelId, userId) => {
   try {
     const sqlGet = `SELECT novel_id, type, novel_propic FROM novel WHERE novel_id = ? AND user_id = ?`;
-    const [result] = await db.query(sqlGet, [novelId,userId]);
+    const [result] = await db.query(sqlGet, [novelId, userId]);
 
     if (!result.length) {
       console.error('Novel not found');
@@ -215,7 +215,7 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
 
     const chapterTable = novel.type === 'DES' ? 'chapter_descript' : 'chapter_other'; // Adjust "chapter_other" as needed
     const chapterQuery = `SELECT * FROM ${chapterTable} WHERE novel_id = ? ORDER BY created_at DESC LIMIT ?, ?`;
-    
+
     const [novelChapters] = await db.query(chapterQuery, [novel.novel_id, offset, rowsLimit]);
 
     const countQuery = `SELECT COUNT(*) AS total FROM ${chapterTable} WHERE novel_id = ?`;
@@ -247,30 +247,39 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
     console.error("Novel detail fetching failed");
   }
 };
-const createChatChapter = async (novelId,chapterName,order) =>{
+const createChatChapter = async (novelId, chapterName) => {
   try {
-    console.log(novelId);
-    
-    const [result] = await db.query('INSERT INTO chapter_chat (novel_id, chapter_name, `order`) VALUES (?, ?, ?)', [novelId, chapterName, order]);
+    // console.log(novelId);
+
+    const [result] = await db.query('INSERT INTO chapter (novel_id, chapter_name, type) VALUES (?, ?, ?)', [novelId, chapterName, 'CHAT']);
     return { chapterId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chat failed");
   }
 }
+const createDescChapter = async (novelId, chapterName, content) => {
+  try {
+    const [result] = await db.query('INSERT INTO chapter (novel_id, chapter_name, type, content) VALUES (?, ?, ?, ?)', [novelId, chapterName, 'DESC', content]);
+    return { chapterId: result.insertId };
+  } catch (error) {
+    console.error("Error create chat:", error);
+    throw new Error("Novel create chapter failed");
+  }
+}
 const createChar = async (novel_id, name, role, charPic) => {
   try {
-    const imagePath = charPic.path; 
+    const imagePath = charPic.path;
     const sql = `INSERT INTO characters (novel_id, name, role, image_path) VALUES (?, ?, ?, ?)`;
     const [result] = await db.query(sql, [novel_id, name, role, imagePath]);
-    
+
     return { characterId: result.insertId };
   } catch (error) {
     console.error("Error inserting character:", error);
     throw new Error("Character creation failed");
   }
 };
-const updateChar = async (characterId,name, role, charPic) => {
+const updateChar = async (characterId, name, role, charPic) => {
   try {
     let sql = `UPDATE characters SET name = ?, role = ?`;
     const params = [name, role];
@@ -342,17 +351,18 @@ const getAllChar = async (novelId) => {
           ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/charactor/${character.image_path.split("\\").pop()}`
           : null,
       }));
-      return {status: "success",data: mappedCharacters,
+      return {
+        status: "success", data: mappedCharacters,
       };
     } else {
-      return {status: "fail", message: "No characters found for the given novel ID"};
+      return { status: "fail", message: "No characters found for the given novel ID" };
     }
   } catch (error) {
     console.error("Error retrieving characters:", error);
     throw new Error("Character retrieval failed");
   }
 };
-const createMessage = async (chapterId ,sender,content,timestamp) =>{
+const createMessage = async (chapterId, sender, content, timestamp) => {
   try {
     const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'text', content, timestamp]);
     return { messageId: result.insertId };
@@ -361,10 +371,10 @@ const createMessage = async (chapterId ,sender,content,timestamp) =>{
     throw new Error("Novel create chat failed");
   }
 }
-const updateMessage = async (messageId ,sender,content,timestamp) =>{
+const updateMessage = async (messageId, sender, content, timestamp) => {
   try {
     const sql = `UPDATE message_draft SET sender = ?,content = ?,timestamp = ? WHERE draft_id = ?`;
-    const [result] = await db.query(sql, [sender,content, timestamp,messageId ]);
+    const [result] = await db.query(sql, [sender, content, timestamp, messageId]);
     return { messageId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
@@ -381,9 +391,9 @@ const deleteMessage = async (messageId) => {
     throw new Error("Message deletion failed");
   }
 };
-const addMedia = async (chapterId ,sender,media,timestamp) =>{
+const addMedia = async (chapterId, sender, media, timestamp) => {
   try {
-    const mediaPath = media.path; 
+    const mediaPath = media.path;
     const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'media', mediaPath, timestamp]);
     return { messageId: result.insertId };
   } catch (error) {
@@ -421,7 +431,7 @@ const saveDraftToMainMessage = async (chapterId) => {
       msg.sender,
       msg.message_type,
       msg.content,
-      msg.timestamp, ]);
+      msg.timestamp,]);
     await db.query(insertSql, [values]);
 
     // ลบข้อมูลใน message_draft หลังจากย้ายไปตารางหลักแล้ว
@@ -434,53 +444,43 @@ const saveDraftToMainMessage = async (chapterId) => {
     throw new Error("Failed to save drafts to main message");
   }
 };
-const getMyNovels = async (keyword, start = 0, limit = 10,userId) => {
+const getMyNovels = async (keyword, startIndex, limitIndex, userId) => {
   try {
+    const limit = Number(limitIndex) || 10;
+    const start = ((Number(startIndex) || 1) - 1) * limit;
     let sql = `SELECT * FROM novel WHERE user_id = ? `;
     const params = [userId];
     if (keyword) {
       sql += `AND novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
-
     sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
-    params.push(Number(limit), Number(start));
-
+    params.push(limit, start);
     const [novels] = await db.query(sql, params);
-
-    let countSql = `SELECT COUNT(*) AS total FROM novel `;
-    const countParams = [];
-
-    if (keyword) {
-      countSql += `WHERE novel_name LIKE ?`;
-      countParams.push(`%${keyword}%`);
-    }
-
+    const countSql = `
+      SELECT COUNT(*) AS total 
+      FROM novel 
+      WHERE user_id = ? 
+      ${keyword ? 'AND novel_name LIKE ?' : ''}
+    `;
+    const countParams = [userId, ...(keyword ? [`%${keyword}%`] : [])];
     const [totalResult] = await db.query(countSql, countParams);
-    const total = totalResult[0].total;
-    const nowPage = Math.floor(start / limit) + 1;
-
+    const total = totalResult[0]?.total || 0;
+    const nowPage = Math.ceil((start + 1) / limit);
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
-
-    return {
-      status: "success",
-      data: mappedNovels,
-      total: total,
-      perPage: limit,
-      nowPage: nowPage,
-    };
+    return {status: "success",data: mappedNovels,total,perPage: limit,nowPage,};
   } catch (error) {
-    console.error("Error fetching novels:", error);
-    console.error("Novel fetching failed");
+    console.error("Error fetching novels:", error.message);
+    throw new Error("Novel fetching failed");
   }
 };
+
+
 module.exports = {
   createNovel,
   getNovels,
@@ -499,5 +499,6 @@ module.exports = {
   getAllChar,
   saveDraftToMainMessage,
   deleteAllDrftByChaapterId,
-  getMyNovels
+  getMyNovels,
+  createDescChapter
 };
