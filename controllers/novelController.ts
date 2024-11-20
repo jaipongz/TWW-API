@@ -91,7 +91,7 @@ export class novelController {
         try {
             const { novelId, chapterName, content } = req.query;
             const response = await novelService.createDescChapter(novelId, chapterName, content);
-            return res.status(200).json({ status: 'success', data: 'response' });
+            return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);
             return res.status(500).json({ status: 'fail', message: error });

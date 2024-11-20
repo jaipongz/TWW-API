@@ -413,10 +413,8 @@ const deleteAllDrftByChaapterId = async (chapterId) => {
   }
 };
 
-// ย้ายข้อความจาก message_draft ไปยังตารางหลักและลบข้อมูลใน draft
 const saveDraftToMainMessage = async (chapterId) => {
   try {
-    // ดึงข้อมูลทั้งหมดจาก message_draft ตาม chapterId
     const selectSql = `SELECT * FROM message_draft WHERE chapter_id = ?`;
     const [draftMessages] = await db.query(selectSql, [chapterId]);
 
@@ -424,7 +422,6 @@ const saveDraftToMainMessage = async (chapterId) => {
       throw new Error("No drafts found for this chapter");
     }
 
-    // เพิ่มข้อมูลลงในตารางหลัก (main_message)
     const insertSql = `INSERT INTO messages (chapter_id, sender, message_type, content, timestamp) VALUES ?`;
     const values = draftMessages.map((msg) => [
       msg.chapter_id,
@@ -434,7 +431,6 @@ const saveDraftToMainMessage = async (chapterId) => {
       msg.timestamp,]);
     await db.query(insertSql, [values]);
 
-    // ลบข้อมูลใน message_draft หลังจากย้ายไปตารางหลักแล้ว
     const deleteSql = `DELETE FROM message_draft WHERE chapter_id = ?`;
     await db.query(deleteSql, [chapterId]);
 
@@ -448,7 +444,7 @@ const getMyNovels = async (keyword, startIndex, limitIndex, userId) => {
   try {
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
-    let sql = `SELECT * FROM novel WHERE user_id = ? `;
+    let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at FROM novel WHERE user_id = ? `;
     const params = [userId];
     if (keyword) {
       sql += `AND novel_name LIKE ? `;
