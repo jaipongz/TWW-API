@@ -164,7 +164,7 @@
         ]
       }
     },
-    "/decrypt": {
+    "/checkDraft": {
       "get": {
         "tags": [
           "User"
@@ -173,11 +173,6 @@
         "parameters": [
           {
             "name": "Authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "authorization",
             "in": "header",
             "type": "string"
           }
@@ -780,6 +775,55 @@
           },
           {
             "name": "content",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/myNovelList": {
+      "get": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
             "in": "query",
             "type": "string"
           }

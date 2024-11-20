@@ -223,22 +223,18 @@ export class userController {
             res.status(500).json({ status: 'fail', message: 'Internal server error' });
         }
     }
-    public static async testDecrypt(req: Request, res: Response) {
+    public static async checkDraft(req: Request, res: Response) {
         // #swagger.tags = ['User']
         /* #swagger.security = [{
             "Bearer": []
         }] */
         try {
-            // console.log(req);
-            const authHeader = req.headers['authorization'];
+            const userData = req.user; 
+            const userId = await userService.decrypt(userData);
+            console.log(userId);
 
-            if (!authHeader) {
-                return res.status(400).json({ status: "error", message: "Authorization header is missing" });
-            }
 
-            const result = userService.decrypt(authHeader);
-
-            res.status(200).json({ status: "success", data: result });
+            res.status(200).json({ status: "success", data: userId });
         } catch (error) {
             console.error("Error verifying token:", error);
             res.status(500).json({ status: "fail", message: "Internal server error" });

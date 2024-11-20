@@ -434,7 +434,53 @@ const saveDraftToMainMessage = async (chapterId) => {
     throw new Error("Failed to save drafts to main message");
   }
 };
+const getMyNovels = async (keyword, start = 0, limit = 10,userId) => {
+  try {
+    let sql = `SELECT * FROM novel WHERE user_id = ? `;
+    const params = [userId];
+    if (keyword) {
+      sql += `AND novel_name LIKE ? `;
+      params.push(`%${keyword}%`);
+    }
 
+    sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
+    params.push(Number(limit), Number(start));
+
+    const [novels] = await db.query(sql, params);
+
+    let countSql = `SELECT COUNT(*) AS total FROM novel `;
+    const countParams = [];
+
+    if (keyword) {
+      countSql += `WHERE novel_name LIKE ?`;
+      countParams.push(`%${keyword}%`);
+    }
+
+    const [totalResult] = await db.query(countSql, countParams);
+    const total = totalResult[0].total;
+    const nowPage = Math.floor(start / limit) + 1;
+
+    const mappedNovels = novels.map((novel) => ({
+      ...novel,
+      novel_propic: novel.novel_propic
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        : null,
+    }));
+
+    return {
+      status: "success",
+      data: mappedNovels,
+      total: total,
+      perPage: limit,
+      nowPage: nowPage,
+    };
+  } catch (error) {
+    console.error("Error fetching novels:", error);
+    console.error("Novel fetching failed");
+  }
+};
 module.exports = {
   createNovel,
   getNovels,
@@ -453,4 +499,5 @@ module.exports = {
   getAllChar,
   saveDraftToMainMessage,
   deleteAllDrftByChaapterId,
+  getMyNovels
 };

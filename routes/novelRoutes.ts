@@ -78,6 +78,7 @@ novelRouter.get('/api/novel/getNovelDetail/:novelId', novelController.getNovelDe
 novelRouter.delete('/api/novel/destroyNovel/:novelId',verifyToken, novelController.destroyNovel);
 novelRouter.put('/api/novel/updateNovel/:novelId',verifyToken, upload.single('novel_propic'), novelController.updateNovel);
 novelRouter.post('/api/novel/addChapter',verifyToken,novelController.createDescChapter);
+novelRouter.get('/api/novel/myNovelList',verifyToken,novelController.myNovelList);
 
 novelRouter.post('/api/novel/charactor',verifyToken,uploadCharPic.single('charPic'),novelController.createChar);
 novelRouter.put('/api/novel/charactor/:charId',verifyToken,uploadCharPic.single('charPic'),novelController.updateChar);
