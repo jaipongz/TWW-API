@@ -157,10 +157,10 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     console.error("Novel fetching failed");
   }
 };
-const destroyNovel = async (novelId) => {
+const destroyNovel = async (novelId,userId) => {
   try {
-    const sqlGet = `SELECT novel_id, type, novel_propic FROM novel WHERE novel_id = ?`;
-    const [result] = await db.query(sqlGet, [novelId]);
+    const sqlGet = `SELECT novel_id, type, novel_propic FROM novel WHERE novel_id = ? AND user_id = ?`;
+    const [result] = await db.query(sqlGet, [novelId,userId]);
 
     if (!result.length) {
       console.error('Novel not found');

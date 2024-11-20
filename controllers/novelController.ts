@@ -10,7 +10,9 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, userId, status } = req.body;
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
+            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc,  status } = req.body;
             const novel_propic = req.file;
             const response = await novelService.createNovel(novelName, penName, group, type, mainGroup, subGroup1,
                 subGroup2, tag, rate, desc, novel_propic, userId, status);
@@ -51,8 +53,10 @@ export class novelController {
             "Bearer": []
         }] */
         try {
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
             const novelId = req.params.novelId;
-            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, userId } = req.body;
+            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc } = req.body;
             const novel_propic = req.file;
             const updatedNovel = await novelService.updateNovel(
                 novelId, novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, novel_propic, userId
@@ -69,8 +73,10 @@ export class novelController {
             "Bearer": []
         }] */
         try {
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
             const novelId = req.params.novelId;
-            const updatedNovel = await novelService.destroyNovel(novelId);
+            const updatedNovel = await novelService.destroyNovel(novelId,userId);
             return res.status(200).json({ status: 'success', data: updatedNovel, message: 'Novel updated successfully' });
         } catch (e) {
             return res.status(500).json({ status: 'fail', message: e });
@@ -252,7 +258,7 @@ export class novelController {
             }
         } catch (error) {
             console.error("Error fetching character by ID:", error);
-            return res.status(500).json({ status: 'fail', message: 'Character retrieval failed' });
+            return res.status(500).json({ status: 'fail', message: error });
         }
     }
     public static async getAllChar(req: Request, res: Response) {
@@ -271,7 +277,7 @@ export class novelController {
             }
         } catch (error) {
             console.error("Error fetching character by ID:", error);
-            return res.status(500).json({ status: 'fail', message: 'Character retrieval failed' });
+            return res.status(500).json({ status: 'fail', message: error });
         }
     }
     public static async myNovelList(req: Request, res: Response) {
@@ -281,17 +287,14 @@ export class novelController {
         }] */
         try {
             const userData = req.user;
-            const { keyword, start, limit } = req.query;
             const userId = await userService.decrypt(userData);
-            console.log(userId);
-            
+            const { keyword, start, limit } = req.query;
             const response = await novelService.getMyNovels(keyword, start, limit,userId);
-
             return res.status(200).json({ status: 'success', data: response });
 
         } catch (error) {
             console.error("Error fetching character by ID:", error);
-            return res.status(500).json({ status: 'fail', message: 'Character retrieval failed' });
+            return res.status(500).json({ status: 'fail', message: error });
         }
     }
 }

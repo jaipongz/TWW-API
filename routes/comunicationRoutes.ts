@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+const express = require('express');
 import { commonController } from '../controllers/commonController';
 import { verifyToken } from '../Middleware/authMiddleware';
 
@@ -7,9 +7,9 @@ const commonRouter = express.Router();
 commonRouter.get('/mainGroup',commonController.mainGroup);
 commonRouter.get('/subGroup',commonController.subGroup);
 
-commonRouter.post('/comments',commonController.postComment);
-commonRouter.delete('/comments/:commentId',  commonController.deleteComment);
-commonRouter.put('/comments/:commentId', commonController.updateComment);
+commonRouter.post('/comments',verifyToken,commonController.postComment);
+commonRouter.delete('/comments/:commentId',verifyToken,  commonController.deleteComment);
+commonRouter.put('/comments/:commentId',verifyToken, commonController.updateComment);
 commonRouter.get('/comments/novel/:novelId', commonController.getCommentsByNovel);
 commonRouter.get('/comments/chapter/:chapterId', commonController.getCommentsByChapter);
 

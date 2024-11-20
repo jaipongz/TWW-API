@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { Request, Response } from 'express';
 const commonService = require('../services/commonService');
+const userService = require('../services/userService');
 
 
 export class commonController {
@@ -10,7 +11,9 @@ export class commonController {
             "Bearer": []
         }] */
         try {
-            const { novelId, chapterId, userId, content } = req.body;
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
+            const { novelId, chapterId, content } = req.body;
             console.log(req.body);
             const response = await commonService.postComment(novelId, chapterId, userId, content);
             if (response) {

@@ -531,9 +531,6 @@
                 "desc": {
                   "example": "any"
                 },
-                "userId": {
-                  "example": "any"
-                },
                 "status": {
                   "example": "any"
                 }
@@ -721,9 +718,6 @@
                   "example": "any"
                 },
                 "desc": {
-                  "example": "any"
-                },
-                "userId": {
                   "example": "any"
                 }
               }
@@ -1350,6 +1344,11 @@
         "description": "",
         "parameters": [
           {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -1359,9 +1358,6 @@
                   "example": "any"
                 },
                 "chapterId": {
-                  "example": "any"
-                },
-                "userId": {
                   "example": "any"
                 },
                 "content": {
@@ -1374,6 +1370,12 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1398,11 +1400,22 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -1430,6 +1443,11 @@
             "type": "string"
           },
           {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -1448,6 +1466,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
