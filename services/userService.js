@@ -141,7 +141,9 @@ const getProfile = async (userId) => {
       user_name: result.user_name,
       user_email: result.user_email,
       user_profile: result.user_profile
-        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/profilePic/${result.user_profile.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/profilePic/${result.user_profile.split("\\").pop()}`
         : null,
     };
 
@@ -157,7 +159,7 @@ const updateProfilePic = async (userId, profile_pic) => {
     const sql = `UPDATE users SET user_profile = ? WHERE user_id = ?`;
     await db.query(sql, [proPic, userId], (error, results) => {
       if (error) {
-        console.log('Error update profile:', error);
+        console.log("Error update profile:", error);
       } else {
         const result = results.rows[0];
         return result;
@@ -169,16 +171,42 @@ const updateProfilePic = async (userId, profile_pic) => {
 };
 const decrypt = async (userData) => {
   try {
-      if (userData && typeof userData === "object" && "id" in userData) {
-        return userData.id;
-      } else {
-        throw new Error("Invalid user data: 'id' property is missing.");
-      }
+    if (userData && typeof userData === "object" && "id" in userData) {
+      return userData.id;
+    } else {
+      throw new Error("Invalid user data: 'id' property is missing.");
+    }
   } catch (error) {
     console.error("Error in decrypt function:", error.message);
     throw error;
   }
 };
+const getCountNovel = async (userId) => {
+  try {
+    const sql = `
+      SELECT 
+        (SELECT COUNT(*) FROM novel n WHERE n.user_id = ?) AS novel_count,
+        (SELECT COUNT(*) FROM chapter c JOIN novel n ON c.novel_id = n.novel_id WHERE n.user_id = ?) AS chapter_count
+    `;
+    const [rows] = await db.query(sql, [userId, userId]);
+    if (rows && rows.length > 0) {
+      const count = rows[0];
+      return {
+        novel_count: count.novel_count,
+        chapter_count: count.chapter_count
+      };
+    } else {
+      console.log('No data found');
+      return null;
+    }
+  } catch (error) {
+    console.error("Error in getCountNovel function:", error.message);
+    throw error;
+  }
+};
+
+
+
 module.exports = {
   register,
   hashPassword,
@@ -190,4 +218,5 @@ module.exports = {
   updateProfilePic,
   getProfile,
   decrypt,
+  getCountNovel,
 };

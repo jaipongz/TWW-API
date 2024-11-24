@@ -12,7 +12,7 @@ export class novelController {
         try {
             const userData = req.user;
             const userId = await userService.decrypt(userData);
-            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc,  status } = req.body;
+            const { novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, status } = req.body;
             const novel_propic = req.file;
             const response = await novelService.createNovel(novelName, penName, group, type, mainGroup, subGroup1,
                 subGroup2, tag, rate, desc, novel_propic, userId, status);
@@ -76,7 +76,7 @@ export class novelController {
             const userData = req.user;
             const userId = await userService.decrypt(userData);
             const novelId = req.params.novelId;
-            const updatedNovel = await novelService.destroyNovel(novelId,userId);
+            const updatedNovel = await novelService.destroyNovel(novelId, userId);
             return res.status(200).json({ status: 'success', data: updatedNovel, message: 'Novel updated successfully' });
         } catch (e) {
             return res.status(500).json({ status: 'fail', message: e });
@@ -288,8 +288,8 @@ export class novelController {
         try {
             const userData = req.user;
             const userId = await userService.decrypt(userData);
-            const { keyword, start, limit } = req.query;
-            const response = await novelService.getMyNovels(keyword, start, limit,userId);
+            const { keyword, start, limit, sortBy, where } = req.query;
+            const response = await novelService.getMyNovels(keyword, start, limit, userId, sortBy, where);
             return res.status(200).json({ status: 'success', data: response });
 
         } catch (error) {

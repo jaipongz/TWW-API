@@ -60,7 +60,7 @@ export class userController {
         /* #swagger.security = [{
             "Bearer": []
         }] */
-        const userData = req.user; 
+        const userData = req.user;
         const result = await userService.decrypt(userData);
         console.log(result);
 
@@ -215,12 +215,35 @@ export class userController {
             "Bearer": []
         }] */
         try {
-            const { userId } = req.query;
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
             const response = await userService.getProfile(userId);
             res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error('Error updating profile picture:', error);
             res.status(500).json({ status: 'fail', message: 'Internal server error' });
+        }
+    }
+    public static async getCountNovel(req: Request, res: Response) {
+        // #swagger.tags = ['User']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const userData = req.user;
+            const userId = await userService.decrypt(userData); 
+            if (!userId) {
+                return res.status(400).json({ status: 'fail', message: 'User ID not found' });
+            }
+            const response = await userService.getCountNovel(userId);
+            if (response) {
+                res.status(200).json({ status: 'success', data: response });
+            } else {
+                res.status(400).json({ status: 'fail', message: `Not found` });
+            }
+        } catch (error) {
+            console.error('Error in getCountNovel:', error);
+            res.status(500).json({ status: 'fail', message: error });
         }
     }
     public static async checkDraft(req: Request, res: Response) {
@@ -229,7 +252,7 @@ export class userController {
             "Bearer": []
         }] */
         try {
-            const userData = req.user; 
+            const userData = req.user;
             const userId = await userService.decrypt(userData);
             console.log(userId);
 

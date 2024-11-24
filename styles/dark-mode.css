@@ -1,0 +1,70 @@
+/* Universal text color rule */
+* {
+    color: #ffffff !important;
+}
+
+/* Body background for dark mode */
+body {
+    background-color: #121212 !important;
+}
+
+/* Topbar styling */
+.swagger-ui .topbar {
+    background-color: #1e1e1e;
+}
+
+/* Info section styling */
+.swagger-ui .info {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Scheme container */
+.swagger-ui .scheme-container {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Operation blocks */
+.swagger-ui .opblock-summary {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.swagger-ui .opblock-section-header {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* Hover state for operation blocks */
+.swagger-ui .opblock-summary:hover {
+    background-color: #444444;
+}
+
+/* Buttons and dropdowns */
+.swagger-ui .btn, 
+.swagger-ui select {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+/* Additional specific elements */
+span {
+    color: #ffffff !important;
+}
+
+.title {
+    color: #ffffff !important;
+}
+
+pre {
+    color: #ffffff !important;
+}
+
+p {
+    color: #ffffff !important;
+}
+
+.operation-tag-content {
+    color: #ffffff !important;
+}

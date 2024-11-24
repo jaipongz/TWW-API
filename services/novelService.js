@@ -440,17 +440,31 @@ const saveDraftToMainMessage = async (chapterId) => {
     throw new Error("Failed to save drafts to main message");
   }
 };
-const getMyNovels = async (keyword, startIndex, limitIndex, userId) => {
+const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, where) => {
   try {
+    // const extraWhere = '';
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
     let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at FROM novel WHERE user_id = ? `;
+    let order = `ORDER BY updated_at `;
+    let sort = 'DESC';
+    console.log('SORT IS');
+    console.log(sortBy);
+    
+    if(sortBy){
+      sort = sortBy;
+    }
     const params = [userId];
     if (keyword) {
       sql += `AND novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
-    sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
+    if(where){
+      sql += `AND novel_name LIKE ? `;
+    }
+    sql += order;
+    sql += sort;
+    sql += ` LIMIT ? OFFSET ?`;
     params.push(limit, start);
     const [novels] = await db.query(sql, params);
     const countSql = `

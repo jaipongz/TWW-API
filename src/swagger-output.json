@@ -419,10 +419,39 @@
             "name": "Authorization",
             "in": "header",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
           {
-            "name": "userId",
-            "in": "query",
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/user/getCountNovel": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -818,6 +847,16 @@
           },
           {
             "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "where",
             "in": "query",
             "type": "string"
           }

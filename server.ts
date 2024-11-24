@@ -11,6 +11,9 @@ const { commonRouter } = require('./routes/comunicationRoutes');
 const session = require('express-session'); // To manage session
 const passport = require('./Middleware/google'); // Import the Google middleware
 const path = require('path');
+const fs = require('fs');
+
+const customCss = fs.readFileSync('./styles/dark-mode.css', 'utf8');
 
 
 config();
@@ -33,7 +36,7 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '50mb' })); // Increased limit to 10 MB
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile,{ customCss }));
 app.use('/storage', express.static(path.join(__dirname, 'src/storage')));
 app.use(userRouter);
 app.use(memberRouter);

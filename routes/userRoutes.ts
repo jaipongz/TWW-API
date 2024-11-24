@@ -55,4 +55,5 @@ userRouter.post('/verifyPassword',userController.verify);
 userRouter.post('/resetPassword',userController.resetPassword);
 userRouter.post('/api/user/updateProfilePic',verifyToken,upload.single('profile_pic'),userController.updateProfile);
 userRouter.get('/api/user/getProfile',verifyToken,userController.getProfile);
+userRouter.get('/api/user/getCountNovel',verifyToken,userController.getCountNovel);
 export { userRouter };
