@@ -445,7 +445,7 @@ const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, wher
     // const extraWhere = '';
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
-    let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at FROM novel WHERE user_id = ? `;
+    let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at,published,tag FROM novel WHERE user_id = ? `;
     let order = `ORDER BY updated_at `;
     let sort = 'DESC';
     console.log('SORT IS');
