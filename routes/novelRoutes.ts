@@ -44,6 +44,7 @@ const upload = multer({
         }
     }
 });
+
 const uploadCharPic = multer({
     storage: charactor,
     limits: { fileSize: 1024 * 1024 * 5 },
