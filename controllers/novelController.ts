@@ -89,14 +89,53 @@ export class novelController {
             "Bearer": []
         }] */
         try {
-            const { novelId, chapterName, content } = req.query;
-            const response = await novelService.createDescChapter(novelId, chapterName, content);
+            const novelId = req.params.novelId;
+            const {  chapterName, content ,writerMsg,comment} = req.query;
+            const response = await novelService.createDescChapter(novelId, chapterName, content,writerMsg,comment);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    public static async getDescChapter(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const chapterId = req.params.chapterId;
+    
+            if (!chapterId) {
+                return res.status(400).json({ 
+                    status: 'fail', 
+                    message: 'Chapter ID is required.' 
+                });
+            }
+    
+            const response = await novelService.getDescChapter(chapterId);
+    
+            if (!response || response.length === 0) {
+                return res.status(404).json({ 
+                    status: 'fail', 
+                    message: 'Chapter not found.' 
+                });
+            }
+    
+            return res.status(200).json({ 
+                status: 'success', 
+                data: response[0] // Assuming response is an array with one row
+            });
+        } catch (error) {
+            console.error("Error fetching chapter:", error);
+    
+            return res.status(500).json({ 
+                status: 'fail', 
+                message: 'An unexpected error occurred while fetching the chapter.' 
+            });
+        }
+    }
+    
 
     public static async createChat(req: Request, res: Response) {
         // #swagger.tags = ['Novel']

@@ -1,13 +1,16 @@
 const { log } = require("console");
 const db = require("../db");
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const createNovel = async (
   novelName,
   penName,
   group,
-  type, mainGroup, subGroup1, subGroup2,
+  type,
+  mainGroup,
+  subGroup1,
+  subGroup2,
   tag,
   rate,
   desc,
@@ -19,7 +22,21 @@ const createNovel = async (
     const proPic = novel_propic.path;
     await db.query(
       "INSERT INTO novel (novel_name, pen_name, novel_group, type,main_group,sub_group1,sub_group2, tag, rate, novel_desc, novel_propic, user_id, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [novelName, penName, group, type, mainGroup, subGroup1, subGroup2, tag, rate, desc, proPic, userId, status]
+      [
+        novelName,
+        penName,
+        group,
+        type,
+        mainGroup,
+        subGroup1,
+        subGroup2,
+        tag,
+        rate,
+        desc,
+        proPic,
+        userId,
+        status,
+      ]
     );
     return `Create Novel successful`;
   } catch (error) {
@@ -32,7 +49,10 @@ const updateNovel = async (
   novelName,
   penName,
   group,
-  type, mainGroup, subGroup1, subGroup2,
+  type,
+  mainGroup,
+  subGroup1,
+  subGroup2,
   tag,
   rate,
   desc,
@@ -140,8 +160,9 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${process.env.PORT
-        }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
 
@@ -163,18 +184,18 @@ const destroyNovel = async (novelId, userId) => {
     const [result] = await db.query(sqlGet, [novelId, userId]);
 
     if (!result.length) {
-      console.error('Novel not found');
-      throw new Error('Novel not found');
+      console.error("Novel not found");
+      throw new Error("Novel not found");
     }
 
     const novel = result[0];
     let table;
 
-    if (novel.type === 'DES') {
-      table = 'chapter_descript';
+    if (novel.type === "DES") {
+      table = "chapter_descript";
     } else {
-      console.error('Invalid novel type');
-      throw new Error('Invalid novel type');
+      console.error("Invalid novel type");
+      throw new Error("Invalid novel type");
     }
 
     const sqlChapters = `DELETE FROM ${table} WHERE novel_id = ?`;
@@ -184,7 +205,11 @@ const destroyNovel = async (novelId, userId) => {
     await db.query(sqlNovel, [novelId]);
 
     const imagePath = novel.novel_propic;
-    const fullPath = path.resolve(__dirname, '../src/storage/novelPropic', imagePath.split('\\').pop()); // Adjust path as necessary
+    const fullPath = path.resolve(
+      __dirname,
+      "../src/storage/novelPropic",
+      imagePath.split("\\").pop()
+    ); // Adjust path as necessary
 
     fs.unlink(fullPath, (err) => {
       if (err) {
@@ -194,7 +219,7 @@ const destroyNovel = async (novelId, userId) => {
       }
     });
 
-    return { status: 'success', message: 'Novel deleted successfully' };
+    return { status: "success", message: "Novel deleted successfully" };
   } catch (error) {
     console.error("Error deleting novel:", error);
     throw new Error("Novel deletion failed");
@@ -213,10 +238,15 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
       console.error("Novel not found");
     }
 
-    const chapterTable = novel.type === 'DES' ? 'chapter_descript' : 'chapter_other'; // Adjust "chapter_other" as needed
+    const chapterTable =
+      novel.type === "DES" ? "chapter_descript" : "chapter_other"; // Adjust "chapter_other" as needed
     const chapterQuery = `SELECT * FROM ${chapterTable} WHERE novel_id = ? ORDER BY created_at DESC LIMIT ?, ?`;
 
-    const [novelChapters] = await db.query(chapterQuery, [novel.novel_id, offset, rowsLimit]);
+    const [novelChapters] = await db.query(chapterQuery, [
+      novel.novel_id,
+      offset,
+      rowsLimit,
+    ]);
 
     const countQuery = `SELECT COUNT(*) AS total FROM ${chapterTable} WHERE novel_id = ?`;
     const [[{ total }]] = await db.query(countQuery, [novel.novel_id]);
@@ -230,7 +260,9 @@ const getNovelDetail = async (novelId, start = 0, limit = 10) => {
       pen_name: novel.pen_name,
       tag: mappedTags,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
       chapters: novelChapters,
       pagination: {
@@ -251,22 +283,49 @@ const createChatChapter = async (novelId, chapterName) => {
   try {
     // console.log(novelId);
 
-    const [result] = await db.query('INSERT INTO chapter (novel_id, chapter_name, type) VALUES (?, ?, ?)', [novelId, chapterName, 'CHAT']);
+    const [result] = await db.query(
+      "INSERT INTO chapter (novel_id, chapter_name, type) VALUES (?, ?, ?)",
+      [novelId, chapterName, "CHAT"]
+    );
     return { chapterId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chat failed");
   }
-}
-const createDescChapter = async (novelId, chapterName, content) => {
+};
+const createDescChapter = async (
+  novelId,
+  chapterName,
+  content,
+  writerMsg,
+  comment
+) => {
   try {
-    const [result] = await db.query('INSERT INTO chapter (novel_id, chapter_name, type, content) VALUES (?, ?, ?, ?)', [novelId, chapterName, 'DESC', content]);
+    // Ensure writerMsg is null if it's empty, undefined, or only spaces
+    const fromWriter = !writerMsg || writerMsg.trim() === "" ? null : writerMsg;
+
+    const [result] = await db.query(
+      "INSERT INTO chapter (novel_id, chapter_name, type, content, message_writer, comment) VALUES (?, ?, ?, ?, ?, ?)",
+      [novelId, chapterName, "DESC", content, fromWriter, comment]
+    );
+
     return { chapterId: result.insertId };
+  } catch (error) {
+    console.error("Error creating chapter:", error);
+    throw new Error("Novel create chapter failed");
+  }
+};
+const getDescChapter = async (chapterId) => {
+  try {
+    const select =
+      "SELECT chapter_id,chapter_name,content,comment,message_writer,updated_at FROM chapter WHERE chapter_id = ?";
+    const [result] = await db.query(select, [chapterId]);
+    return result;
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chapter failed");
   }
-}
+};
 const createChar = async (novel_id, name, role, charPic) => {
   try {
     const imagePath = charPic.path;
@@ -299,12 +358,19 @@ const updateChar = async (characterId, name, role, charPic) => {
 const deleteChar = async (characterId) => {
   try {
     console.log("Attempting to delete character with ID:", characterId);
-    const [character] = await db.query('SELECT image_path FROM characters WHERE id = ?', [characterId]);
+    const [character] = await db.query(
+      "SELECT image_path FROM characters WHERE id = ?",
+      [characterId]
+    );
     if (!character || character.length === 0) {
-      throw new Error('Character not found');
+      throw new Error("Character not found");
     }
     const imagePath = character[0].image_path;
-    const fullPath = path.resolve(__dirname, '../src/storage/charactor', imagePath.split('\\').pop()); // Adjust path as necessary
+    const fullPath = path.resolve(
+      __dirname,
+      "../src/storage/charactor",
+      imagePath.split("\\").pop()
+    ); // Adjust path as necessary
     fs.unlink(fullPath, (err) => {
       if (err) {
         console.error(`Failed to delete image file: ${fullPath}`, err);
@@ -312,7 +378,9 @@ const deleteChar = async (characterId) => {
         console.log(`Image file deleted successfully: ${fullPath}`);
       }
     });
-    const [result] = await db.query('DELETE FROM characters WHERE id = ?', [characterId]);
+    const [result] = await db.query("DELETE FROM characters WHERE id = ?", [
+      characterId,
+    ]);
     // console.log("Deletion result:", result);
     return { affectedRows: result.affectedRows };
   } catch (error) {
@@ -328,11 +396,13 @@ const getCharById = async (characterId) => {
     if (result.length > 0) {
       const character = result[0];
       character.image_path = character.image_path
-        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/charactor/${character.image_path.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/charactor/${character.image_path.split("\\").pop()}`
         : null;
       return character;
     } else {
-      throw new Error('Character not found');
+      throw new Error("Character not found");
     }
   } catch (error) {
     console.error("Error retrieving character:", error);
@@ -348,14 +418,20 @@ const getAllChar = async (novelId) => {
       const mappedCharacters = characters.map((character) => ({
         ...character,
         image_path: character.image_path
-          ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/charactor/${character.image_path.split("\\").pop()}`
+          ? `http://${process.env.DOMAIN}:${
+              process.env.PORT
+            }/storage/charactor/${character.image_path.split("\\").pop()}`
           : null,
       }));
       return {
-        status: "success", data: mappedCharacters,
+        status: "success",
+        data: mappedCharacters,
       };
     } else {
-      return { status: "fail", message: "No characters found for the given novel ID" };
+      return {
+        status: "fail",
+        message: "No characters found for the given novel ID",
+      };
     }
   } catch (error) {
     console.error("Error retrieving characters:", error);
@@ -364,23 +440,31 @@ const getAllChar = async (novelId) => {
 };
 const createMessage = async (chapterId, sender, content, timestamp) => {
   try {
-    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'text', content, timestamp]);
+    const [result] = await db.query(
+      "INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)",
+      [chapterId, sender, "text", content, timestamp]
+    );
     return { messageId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chat failed");
   }
-}
+};
 const updateMessage = async (messageId, sender, content, timestamp) => {
   try {
     const sql = `UPDATE message_draft SET sender = ?,content = ?,timestamp = ? WHERE draft_id = ?`;
-    const [result] = await db.query(sql, [sender, content, timestamp, messageId]);
+    const [result] = await db.query(sql, [
+      sender,
+      content,
+      timestamp,
+      messageId,
+    ]);
     return { messageId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chat failed");
   }
-}
+};
 const deleteMessage = async (messageId) => {
   try {
     const sql = `DELETE FROM message_draft WHERE draft_id = ?`;
@@ -394,13 +478,16 @@ const deleteMessage = async (messageId) => {
 const addMedia = async (chapterId, sender, media, timestamp) => {
   try {
     const mediaPath = media.path;
-    const [result] = await db.query('INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)', [chapterId, sender, 'media', mediaPath, timestamp]);
+    const [result] = await db.query(
+      "INSERT INTO message_draft (chapter_id, sender, message_type, content, timestamp) VALUES (?, ?, ?, ?, ?)",
+      [chapterId, sender, "media", mediaPath, timestamp]
+    );
     return { messageId: result.insertId };
   } catch (error) {
     console.error("Error create chat:", error);
     throw new Error("Novel create chat failed");
   }
-}
+};
 
 const deleteAllDrftByChaapterId = async (chapterId) => {
   try {
@@ -428,30 +515,41 @@ const saveDraftToMainMessage = async (chapterId) => {
       msg.sender,
       msg.message_type,
       msg.content,
-      msg.timestamp,]);
+      msg.timestamp,
+    ]);
     await db.query(insertSql, [values]);
 
     const deleteSql = `DELETE FROM message_draft WHERE chapter_id = ?`;
     await db.query(deleteSql, [chapterId]);
 
-    return { status: "success", message: "Drafts saved and cleared successfully" };
+    return {
+      status: "success",
+      message: "Drafts saved and cleared successfully",
+    };
   } catch (error) {
     console.error("Error saving drafts to main message:", error);
     throw new Error("Failed to save drafts to main message");
   }
 };
-const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, where) => {
+const getMyNovels = async (
+  keyword,
+  startIndex,
+  limitIndex,
+  userId,
+  sortBy,
+  where
+) => {
   try {
     // const extraWhere = '';
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
     let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at,published,tag FROM novel WHERE user_id = ? `;
     let order = `ORDER BY updated_at `;
-    let sort = 'DESC';
-    console.log('SORT IS');
+    let sort = "DESC";
+    console.log("SORT IS");
     console.log(sortBy);
-    
-    if(sortBy){
+
+    if (sortBy) {
       sort = sortBy;
     }
     const params = [userId];
@@ -459,7 +557,7 @@ const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, wher
       sql += `AND novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
-    if(where){
+    if (where) {
       sql += `AND novel_name LIKE ? `;
     }
     sql += order;
@@ -471,7 +569,7 @@ const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, wher
       SELECT COUNT(*) AS total 
       FROM novel 
       WHERE user_id = ? 
-      ${keyword ? 'AND novel_name LIKE ?' : ''}
+      ${keyword ? "AND novel_name LIKE ?" : ""}
     `;
     const countParams = [userId, ...(keyword ? [`%${keyword}%`] : [])];
     const [totalResult] = await db.query(countSql, countParams);
@@ -480,16 +578,23 @@ const getMyNovels = async (keyword, startIndex, limitIndex, userId, sortBy, wher
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `http://${process.env.DOMAIN}:${
+            process.env.PORT
+          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
-    return {status: "success",data: mappedNovels,total,perPage: limit,nowPage,};
+    return {
+      status: "success",
+      data: mappedNovels,
+      total,
+      perPage: limit,
+      nowPage,
+    };
   } catch (error) {
     console.error("Error fetching novels:", error.message);
     throw new Error("Novel fetching failed");
   }
 };
-
 
 module.exports = {
   createNovel,
@@ -510,5 +615,6 @@ module.exports = {
   saveDraftToMainMessage,
   deleteAllDrftByChaapterId,
   getMyNovels,
-  createDescChapter
+  createDescChapter,
+  getDescChapter,
 };
