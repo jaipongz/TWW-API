@@ -833,7 +833,7 @@
         ]
       }
     },
-    "/api/novel/novel/desc/{novelId}": {
+    "/api/novel/desc/{novelId}": {
       "post": {
         "tags": [
           "Novel"
@@ -894,7 +894,7 @@
         ]
       }
     },
-    "/api/novel/novel/desc/{chapterId}": {
+    "/api/novel/desc/{chapterId}": {
       "get": {
         "tags": [
           "Novel"
