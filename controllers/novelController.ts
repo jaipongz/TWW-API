@@ -90,7 +90,7 @@ export class novelController {
         }] */
         try {
             const novelId = req.params.novelId;
-            const {  chapterName, content ,writerMsg,comment} = req.query;
+            const {  chapterName, content ,writerMsg,comment} = req.body;
             const response = await novelService.createDescChapter(novelId, chapterName, content,writerMsg,comment);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {

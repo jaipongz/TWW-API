@@ -852,24 +852,25 @@
             "type": "string"
           },
           {
-            "name": "chapterName",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "content",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "writerMsg",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "comment",
-            "in": "query",
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "chapterName": {
+                  "example": "any"
+                },
+                "content": {
+                  "example": "any"
+                },
+                "writerMsg": {
+                  "example": "any"
+                },
+                "comment": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
