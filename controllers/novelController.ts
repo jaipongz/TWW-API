@@ -2,6 +2,12 @@ import { Request, Response } from 'express';
 const novelService = require('../services/novelService');
 const userService = require('../services/userService');
 const fs = require('fs').promises;
+const multer = require('multer');
+const path = require('path');
+
+// Configure multer for handling form data
+const storage = multer.memoryStorage(); // Store file data in memory (you can also store it on disk)
+const upload = multer({ storage: storage });
 export class novelController {
 
     public static async createNovel(req: Request, res: Response) {
@@ -90,7 +96,11 @@ export class novelController {
         }] */
         try {
             const novelId = req.params.novelId;
-            const {  chapterName, content ,writerMsg,comment} = req.body;
+            const { chapterName, comment } = req.body;
+            let content = req.body.content; // Access large text data (content)
+            let writerMsg = req.body.writerMsg;
+            console.log(content);
+            
             const response = await novelService.createDescChapter(novelId, chapterName, content,writerMsg,comment);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
