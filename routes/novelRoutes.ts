@@ -84,6 +84,8 @@ novelRouter.get('/api/novel/myNovelList',verifyToken,novelController.myNovelList
 novelRouter.post('/api/novel/desc/:novelId',verifyToken,novelController.createDescChapter);
 novelRouter.get('/api/novel/desc/:chapterId',verifyToken,novelController.getDescChapter);
 
+novelRouter.get('/api/chapter/desc/getAll',verifyToken,novelController.getAllDescChapter)
+
 
 novelRouter.post('/api/novel/charactor',verifyToken,uploadCharPic.single('charPic'),novelController.createChar);
 novelRouter.put('/api/novel/charactor/:charId',verifyToken,uploadCharPic.single('charPic'),novelController.updateChar);

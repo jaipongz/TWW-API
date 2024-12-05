@@ -540,41 +540,63 @@ const getMyNovels = async (
   where
 ) => {
   try {
-    // const extraWhere = '';
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
-    let sql = `SELECT novel_id,novel_name,novel_group,type,novel_propic,updated_at,published,tag FROM novel WHERE user_id = ? `;
-    let order = `ORDER BY updated_at `;
+
+    let sql = `
+      SELECT 
+        n.novel_id, 
+        n.novel_name, 
+        n.novel_group, 
+        n.type, 
+        n.novel_propic, 
+        DATE_ADD(n.updated_at, INTERVAL 7 HOUR) AS updated_at, 
+        n.published, 
+        n.tag,
+        COUNT(c.chapter_id) AS total_chapter
+      FROM novel n
+      LEFT JOIN chapter c ON c.novel_id = n.novel_id
+      WHERE n.user_id = ?
+      GROUP BY n.novel_id
+    `;
+    let order = `ORDER BY n.updated_at `;
     let sort = "DESC";
-    console.log("SORT IS");
-    console.log(sortBy);
 
     if (sortBy) {
       sort = sortBy;
     }
+
     const params = [userId];
+
     if (keyword) {
-      sql += `AND novel_name LIKE ? `;
+      sql += `AND n.novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
+
     if (where) {
-      sql += `AND novel_name LIKE ? `;
+      sql += `AND ${where} `;
     }
-    sql += order;
-    sql += sort;
-    sql += ` LIMIT ? OFFSET ?`;
+
+    sql += `${order} ${sort} LIMIT ? OFFSET ?`;
     params.push(limit, start);
+
     const [novels] = await db.query(sql, params);
+
     const countSql = `
-      SELECT COUNT(*) AS total 
-      FROM novel 
-      WHERE user_id = ? 
-      ${keyword ? "AND novel_name LIKE ?" : ""}
+      SELECT COUNT(DISTINCT n.novel_id) AS total 
+      FROM novel n 
+      LEFT JOIN chapter c ON c.novel_id = n.novel_id
+      WHERE n.user_id = ?
+      ${keyword ? "AND n.novel_name LIKE ?" : ""}
+      ${where ? `AND ${where}` : ""}
     `;
     const countParams = [userId, ...(keyword ? [`%${keyword}%`] : [])];
     const [totalResult] = await db.query(countSql, countParams);
+
     const total = totalResult[0]?.total || 0;
+
     const nowPage = Math.ceil((start + 1) / limit);
+
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
@@ -583,6 +605,7 @@ const getMyNovels = async (
           }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
+
     return {
       status: "success",
       data: mappedNovels,
@@ -593,6 +616,44 @@ const getMyNovels = async (
   } catch (error) {
     console.error("Error fetching novels:", error.message);
     throw new Error("Novel fetching failed");
+  }
+};
+
+const getAllDescChapter = async (novelId, startIndex, limitIndex) => {
+  try {
+    const limit = Number(limitIndex) || 10;
+    const start = ((Number(startIndex) || 1) - 1) * limit;
+    const sql = `
+      SELECT 
+        chapter_id, 
+        chapter_name, 
+        comment, 
+        DATE_ADD(updated_at, INTERVAL 7 HOUR) AS updated_at 
+      FROM chapter 
+      WHERE novel_id = ? 
+      ORDER BY updated_at DESC 
+      LIMIT ? OFFSET ?
+    `;
+    const params = [novelId, limit, start];
+    const [chapters] = await db.query(sql, params);
+    const countSql = `
+      SELECT COUNT(*) AS total 
+      FROM chapter 
+      WHERE novel_id = ?
+    `;
+    const [totalResult] = await db.query(countSql, [novelId]);
+    const total = totalResult[0]?.total || 0;
+    const nowPage = Math.ceil((start + 1) / limit);
+    return {
+      status: "success",
+      data: chapters,
+      total,
+      perPage: limit,
+      nowPage,
+    };
+  } catch (error) {
+    console.error("Error fetching chapters:", error.message);
+    throw new Error("Chapter fetching failed");
   }
 };
 
@@ -617,4 +678,5 @@ module.exports = {
   getMyNovels,
   createDescChapter,
   getDescChapter,
+  getAllDescChapter,
 };

@@ -98,6 +98,22 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    public static async getAllDescChapter(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const novelId = req.query.novelId;
+            const startIndex = req.query.startIndex;
+            const limitIndex = req.query.limitIndex;
+            const response = await novelService.getAllDescChapter(novelId,startIndex,limitIndex);
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error("Error fetching novels:", error);
+            return res.status(500).json({ status: 'fail', message: error });
+        }
+    }
     public static async getDescChapter(req: Request, res: Response) {
         // #swagger.tags = ['Novel']
         /* #swagger.security = [{
