@@ -225,60 +225,38 @@ const destroyNovel = async (novelId, userId) => {
     throw new Error("Novel deletion failed");
   }
 };
-const getNovelDetail = async (novelId, start = 0, limit = 10) => {
+const getNovelDetail = async (novelId) => {
   try {
-    const offset = parseInt(start, 10);
-    const rowsLimit = parseInt(limit, 10);
+    const novelQuery = `
+      SELECT novel_id, novel_name, pen_name, novel_group, type,
+             main_group, sub_group1, sub_group2, tag, novel_desc, rate, 
+             novel_propic, published, end,
+             DATE_ADD(created_at, INTERVAL 7 HOUR) AS created_at,
+             DATE_ADD(updated_at, INTERVAL 7 HOUR) AS updated_at
+      FROM novel WHERE novel_id = ?
+    `;
+    const result = await db.query(novelQuery, [novelId]);
 
-    const novelQuery = `SELECT * FROM novel WHERE novel_id = ?`;
-    const [novels] = await db.query(novelQuery, [novelId]);
-    const novel = novels[0];
-
-    if (!novel) {
-      console.error("Novel not found");
+    if (!result || result.length === 0) {
+      return { status: false, message: "Novel not found" };
     }
 
-    const chapterTable =
-      novel.type === "DES" ? "chapter_descript" : "chapter_other"; // Adjust "chapter_other" as needed
-    const chapterQuery = `SELECT * FROM ${chapterTable} WHERE novel_id = ? ORDER BY created_at DESC LIMIT ?, ?`;
-
-    const [novelChapters] = await db.query(chapterQuery, [
-      novel.novel_id,
-      offset,
-      rowsLimit,
-    ]);
-
-    const countQuery = `SELECT COUNT(*) AS total FROM ${chapterTable} WHERE novel_id = ?`;
-    const [[{ total }]] = await db.query(countQuery, [novel.novel_id]);
-
-    const mappedTags = novel.tag;
-
-    const mappedNovel = {
-      novel_id: novel.novel_id,
-      novel_name: novel.novel_name,
-      novel_desc: novel.novel_desc,
-      pen_name: novel.pen_name,
-      tag: mappedTags,
-      novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
-        : null,
-      chapters: novelChapters,
-      pagination: {
-        totalChapters: total,
-        perPage: rowsLimit,
-        currentPage: Math.floor(offset / rowsLimit) + 1,
-        totalPages: Math.ceil(total / rowsLimit),
-      },
-    };
-
-    return mappedNovel;
+    const novel = result[0];
+    
+    
+    novel[0].novel_propic = novel[0]
+    ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/novelPropic/${
+      novel[0].novel_propic.replace(/\\/g, '/').split('/').pop()
+      }`
+    : null;
+    
+    return { status: true, data: novel[0] };
   } catch (error) {
     console.error("Error fetching novel details:", error);
-    console.error("Novel detail fetching failed");
+    return { status: false, message: "Failed to fetch novel details" };
   }
 };
+
 const createChatChapter = async (novelId, chapterName) => {
   try {
     // console.log(novelId);
@@ -656,6 +634,30 @@ const getAllDescChapter = async (novelId, startIndex, limitIndex) => {
     throw new Error("Chapter fetching failed");
   }
 };
+const updateStatus = async (userId, novelId, command, status) => {
+  try {
+    const validCommands = ['end', 'published', 'approved'];
+    if (!validCommands.includes(command)) {
+      return { status: false, message: 'Invalid command' };
+    }
+
+    if (!['T', 'F'].includes(status)) {
+      return { status: false, message: 'Invalid status value' };
+    }
+
+    const updateQuery = `UPDATE novel SET ${command} = ? WHERE user_id = ? AND novel_id = ?`;
+    const rs = await db.query(updateQuery, [status, userId, novelId]);
+
+    if (!rs) {
+      return { status: false, message: 'Failed to update novel, no rows affected' };
+    }
+
+    return { status: true, message: 'Update successful' };
+  } catch (error) {
+    console.error('Error updating novel status:', error);
+    return { status: false, message: 'Database query failed' };
+  }
+};
 
 module.exports = {
   createNovel,
@@ -679,4 +681,5 @@ module.exports = {
   createDescChapter,
   getDescChapter,
   getAllDescChapter,
+  updateStatus,
 };

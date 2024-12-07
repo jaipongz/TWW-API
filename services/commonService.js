@@ -69,6 +69,40 @@ const subGroup = async () => {
     throw new Error("Failed to get comment");
   }
 };
+const recTag = async () => {
+  try {
+    // const [rows] = await db.query(`SELECT * FROM sub_group`);
+    const rows = [
+      {
+        "tag":"มาเฟีย"
+      },
+      {
+        "tag":"โอ้วเธอ"
+      },
+      {
+        "tag":"พี่แฉะ"
+      },
+      {
+        "tag":"พ่อไข่ย้อยทูโทน"
+      },
+      {
+        "tag":"แม่มาแล้ว"
+      },
+      {
+        "tag":"นาทอส"
+      },
+      {
+        "tag":"โจร"
+      },
+      {
+        "tag":"แบดบอย"
+      },
+    ];
+    return rows;
+  } catch (rows) {
+    throw new Error("Failed to get comment");
+  }
+};
 
 const addLike = async (novelId, chapterId, userId) => {
   try {
@@ -135,5 +169,6 @@ module.exports = {
   updateComment,
   mainGroup,
   subGroup,
-  addLike
+  addLike,
+  recTag
 };

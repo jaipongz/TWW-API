@@ -116,6 +116,16 @@ export class commonController {
             res.status(200).json({ status: 'success', data: response });
         }
     }
+    public static async recTag(req: Request, res: Response) {
+        // #swagger.tags = ['Global']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        const response = await commonService.recTag();
+        if (response) {
+            res.status(200).json({ status: 'success', data: response });
+        }
+    }
 
     public static async addLike(req: Request, res: Response) {
         // #swagger.tags = ['Communication']

@@ -857,13 +857,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "chapterName": {
-                  "example": "any"
-                },
                 "content": {
                   "example": "any"
                 },
                 "writerMsg": {
+                  "example": "any"
+                },
+                "chapterName": {
                   "example": "any"
                 },
                 "comment": {
@@ -961,6 +961,55 @@
           },
           {
             "name": "limitIndex",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/novel/updateStatus": {
+      "put": {
+        "tags": [
+          "Novel"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "novelId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "command",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "status",
             "in": "query",
             "type": "string"
           }
@@ -1457,6 +1506,24 @@
       }
     },
     "/subGroup": {
+      "get": {
+        "tags": [
+          "Global"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/recTag": {
       "get": {
         "tags": [
           "Global"

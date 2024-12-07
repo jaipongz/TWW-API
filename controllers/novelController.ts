@@ -44,9 +44,8 @@ export class novelController {
         // #swagger.tags = ['Novel']
         try {
             const novelId = req.params.novelId;
-            const { start, limit } = req.query;
-            const response = await novelService.getNovelDetail(novelId, start, limit);
-            return res.status(200).json({ status: 'success', data: response });
+            const response = await novelService.getNovelDetail(novelId);
+            return res.status(200).json({ status: 'success', data: response.data });
         } catch (error) {
             console.error("Error fetching novels:", error);
             return res.status(500).json({ status: 'fail', message: error });
@@ -100,8 +99,8 @@ export class novelController {
             let content = req.body.content; // Access large text data (content)
             let writerMsg = req.body.writerMsg;
             console.log(content);
-            
-            const response = await novelService.createDescChapter(novelId, chapterName, content,writerMsg,comment);
+
+            const response = await novelService.createDescChapter(novelId, chapterName, content, writerMsg, comment);
             return res.status(200).json({ status: 'success', data: response });
         } catch (error) {
             console.error("Error fetching novels:", error);
@@ -117,7 +116,7 @@ export class novelController {
             const novelId = req.query.novelId;
             const startIndex = req.query.startIndex;
             const limitIndex = req.query.limitIndex;
-            const response = await novelService.getAllDescChapter(novelId,startIndex,limitIndex);
+            const response = await novelService.getAllDescChapter(novelId, startIndex, limitIndex);
             return res.status(200).json(response);
         } catch (error) {
             console.error("Error fetching novels:", error);
@@ -131,37 +130,37 @@ export class novelController {
         }] */
         try {
             const chapterId = req.params.chapterId;
-    
+
             if (!chapterId) {
-                return res.status(400).json({ 
-                    status: 'fail', 
-                    message: 'Chapter ID is required.' 
+                return res.status(400).json({
+                    status: 'fail',
+                    message: 'Chapter ID is required.'
                 });
             }
-    
+
             const response = await novelService.getDescChapter(chapterId);
-    
+
             if (!response || response.length === 0) {
-                return res.status(404).json({ 
-                    status: 'fail', 
-                    message: 'Chapter not found.' 
+                return res.status(404).json({
+                    status: 'fail',
+                    message: 'Chapter not found.'
                 });
             }
-    
-            return res.status(200).json({ 
-                status: 'success', 
+
+            return res.status(200).json({
+                status: 'success',
                 data: response[0] // Assuming response is an array with one row
             });
         } catch (error) {
             console.error("Error fetching chapter:", error);
-    
-            return res.status(500).json({ 
-                status: 'fail', 
-                message: 'An unexpected error occurred while fetching the chapter.' 
+
+            return res.status(500).json({
+                status: 'fail',
+                message: 'An unexpected error occurred while fetching the chapter.'
             });
         }
     }
-    
+
 
     public static async createChat(req: Request, res: Response) {
         // #swagger.tags = ['Novel']
@@ -362,4 +361,33 @@ export class novelController {
             return res.status(500).json({ status: 'fail', message: error });
         }
     }
+    public static async updateStatus(req: Request, res: Response) {
+        // #swagger.tags = ['Novel']
+        /* #swagger.security = [{
+            "Bearer": []
+        }] */
+        try {
+            const userData = req.user;
+            const userId = await userService.decrypt(userData);
+    
+            const { novelId, command, status } = req.query;
+    
+            if (!novelId || !command || !status) {
+                return res.status(400).json({ status: 'fail', message: 'Missing required parameters' });
+            }
+    
+            const response = await novelService.updateStatus(userId, novelId, command.toString(), status.toString());
+            if (!response.status) {
+                return res.status(400).json({ status: 'fail', message: response.message });
+            }
+    
+            return res.status(200).json({ status: 'success', message: response.message });
+        } catch (error) {
+            console.error("Error updating novel status:", error);
+            return res.status(500).json({ status: 'fail', message: 'Internal Server Error' });
+        }
+    }
+    
+
+
 }

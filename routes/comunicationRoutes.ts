@@ -6,6 +6,7 @@ const commonRouter = express.Router();
 
 commonRouter.get('/mainGroup',commonController.mainGroup);
 commonRouter.get('/subGroup',commonController.subGroup);
+commonRouter.get('/recTag',commonController.recTag);
 
 commonRouter.post('/comments',verifyToken,commonController.postComment);
 commonRouter.delete('/comments/:commentId',verifyToken,  commonController.deleteComment);
