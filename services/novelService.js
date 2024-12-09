@@ -185,20 +185,20 @@ const destroyNovel = async (novelId, userId) => {
 
     if (!result.length) {
       console.error("Novel not found");
-      throw new Error("Novel not found");
+      return { status: "fail", message: `Not found novel: ${novelId} it's created by UserId: ${userId}` };
     }
 
     const novel = result[0];
-    let table;
+    // let table;
 
-    if (novel.type === "DES") {
-      table = "chapter_descript";
-    } else {
-      console.error("Invalid novel type");
-      throw new Error("Invalid novel type");
-    }
+    // if (novel.type === "DES") {
+    //   table = "chapter";
+    // } else {
+    //   console.error("Invalid novel type");
+    //   throw new Error("Invalid novel type");
+    // }
 
-    const sqlChapters = `DELETE FROM ${table} WHERE novel_id = ?`;
+    const sqlChapters = `DELETE FROM chapter WHERE novel_id = ?`;
     await db.query(sqlChapters, [novelId]);
 
     const sqlNovel = `DELETE FROM novel WHERE novel_id = ?`;
@@ -222,7 +222,8 @@ const destroyNovel = async (novelId, userId) => {
     return { status: "success", message: "Novel deleted successfully" };
   } catch (error) {
     console.error("Error deleting novel:", error);
-    throw new Error("Novel deletion failed");
+    // throw new Error("Novel deletion failed");
+    return {status: 'fail',message:error}
   }
 };
 const getNovelDetail = async (novelId) => {

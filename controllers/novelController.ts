@@ -81,8 +81,8 @@ export class novelController {
             const userData = req.user;
             const userId = await userService.decrypt(userData);
             const novelId = req.params.novelId;
-            const updatedNovel = await novelService.destroyNovel(novelId, userId);
-            return res.status(200).json({ status: 'success', data: updatedNovel, message: 'Novel updated successfully' });
+            const destroy = await novelService.destroyNovel(novelId, userId);
+            return res.status(200).json({ status: destroy.status,  message: destroy.message });
         } catch (e) {
             return res.status(500).json({ status: 'fail', message: e });
         }
