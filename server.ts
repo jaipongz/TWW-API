@@ -46,5 +46,5 @@ app.use(commonRouter);
 const port = process.env.PORT || 3090;
 app.listen(port, () => {
     console.log(`✪✪✪✪✪✪✪✪✪✪✪ ✮ Powered by JaipongZ Industry ✮ ✪✪✪✪✪✪✪✪✪✪✪`);
-    console.log(`Api-docs is running on 👉 ${process.env.BASE_URL}api-docs`);
+    console.log(`Api-docs is running on 👉 ${process.env.BASE_URL}/api-docs`);
 });
