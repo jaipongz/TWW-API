@@ -160,9 +160,7 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `${process.env.DOMAIN}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
 
@@ -246,7 +244,7 @@ const getNovelDetail = async (novelId) => {
     
     
     novel[0].novel_propic = novel[0]
-    ? `http://${process.env.DOMAIN}:${process.env.PORT}/storage/novelPropic/${
+    ? `${process.env.DOMAIN}/storage/novelPropic/${
       novel[0].novel_propic.replace(/\\/g, '/').split('/').pop()
       }`
     : null;
@@ -375,9 +373,7 @@ const getCharById = async (characterId) => {
     if (result.length > 0) {
       const character = result[0];
       character.image_path = character.image_path
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/charactor/${character.image_path.split("\\").pop()}`
+        ? `${process.env.DOMAIN}/storage/charactor/${character.image_path.split("\\").pop()}`
         : null;
       return character;
     } else {
@@ -397,9 +393,7 @@ const getAllChar = async (novelId) => {
       const mappedCharacters = characters.map((character) => ({
         ...character,
         image_path: character.image_path
-          ? `http://${process.env.DOMAIN}:${
-              process.env.PORT
-            }/storage/charactor/${character.image_path.split("\\").pop()}`
+          ? `${process.env.DOMAIN}/storage/charactor/${character.image_path.split("\\").pop()}`
           : null,
       }));
       return {
@@ -579,9 +573,7 @@ const getMyNovels = async (
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `${process.env.DOMAIN}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
         : null,
     }));
 

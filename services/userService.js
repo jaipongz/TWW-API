@@ -141,9 +141,7 @@ const getProfile = async (userId) => {
       user_name: result.user_name,
       user_email: result.user_email,
       user_profile: result.user_profile
-        ? `http://${process.env.DOMAIN}:${
-            process.env.PORT
-          }/storage/profilePic/${result.user_profile.split("\\").pop()}`
+        ? `${process.env.DOMAIN}/storage/profilePic/${result.user_profile.split("\\").pop()}`
         : null,
     };
 
