@@ -131,7 +131,7 @@ const updateNovel = async (
     console.error("Novel update failed");
   }
 };
-const getNovels = async (keyword, start = 0, limit = 10) => {
+const getNovels = async (keyword, start = 1, limit = 10) => {
   try {
     let sql = `SELECT * FROM novel `;
     const params = [];
@@ -139,9 +139,9 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
       sql += `WHERE novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
-
+    let calStart = Math.floor(start) - 1;
     sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
-    params.push(Number(limit), Number(start));
+    params.push(Number(limit), Number(calStart));
 
     const [novels] = await db.query(sql, params);
 
@@ -155,7 +155,7 @@ const getNovels = async (keyword, start = 0, limit = 10) => {
 
     const [totalResult] = await db.query(countSql, countParams);
     const total = totalResult[0].total;
-    const nowPage = Math.floor(start / limit) + 1;
+    const nowPage = start;
 
     const mappedNovels = novels.map((novel) => ({
       ...novel,
