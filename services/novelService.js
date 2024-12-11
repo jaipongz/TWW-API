@@ -133,14 +133,36 @@ const updateNovel = async (
 };
 const getNovels = async (keyword, start = 1, limit = 10) => {
   try {
-    let sql = `SELECT * FROM novel `;
+    let sql = `
+      SELECT 
+        n.novel_id,
+        n.novel_name,
+        n.pen_name,
+        n.novel_group,
+        n.type,
+        n.main_group,
+        n.rate,
+        n.novel_propic,
+        n.published,
+        n.end,
+        n.created_at,
+        n.updated_at,
+        COUNT(c.chapter_id) AS chapter_count
+      FROM novel n
+      LEFT JOIN chapter c ON c.novel_id = n.novel_id
+    `;
     const params = [];
     if (keyword) {
-      sql += `WHERE novel_name LIKE ? `;
+      sql += `WHERE n.novel_name LIKE ? `;
       params.push(`%${keyword}%`);
     }
+
     let calStart = Math.floor(start) - 1;
-    sql += `ORDER BY updated_at DESC LIMIT ? OFFSET ?`;
+    sql += `
+      GROUP BY n.novel_id
+      ORDER BY n.updated_at DESC 
+      LIMIT ? OFFSET ?
+    `;
     params.push(Number(limit), Number(calStart));
 
     const [novels] = await db.query(sql, params);
@@ -173,9 +195,10 @@ const getNovels = async (keyword, start = 1, limit = 10) => {
     };
   } catch (error) {
     console.error("Error fetching novels:", error);
-    console.error("Novel fetching failed");
+    return { status: "error", message: "Failed to fetch novels" };
   }
 };
+
 const destroyNovel = async (novelId, userId) => {
   try {
     const sqlGet = `SELECT novel_id, type, novel_propic FROM novel WHERE novel_id = ? AND user_id = ?`;
