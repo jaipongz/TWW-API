@@ -230,8 +230,8 @@ const getNovelDetail = async (novelId) => {
       SELECT novel_id, novel_name, pen_name, novel_group, type,
              main_group, sub_group1, sub_group2, tag, novel_desc, rate, 
              novel_propic, published, end,
-             DATE_ADD(created_at, INTERVAL 7 HOUR) AS created_at,
-             DATE_ADD(updated_at, INTERVAL 7 HOUR) AS updated_at
+             created_at,
+             updated_at
       FROM novel WHERE novel_id = ?
     `;
     const result = await db.query(novelQuery, [novelId]);
@@ -515,7 +515,7 @@ const getMyNovels = async (
   try {
     const limit = Number(limitIndex) || 10;
     const start = ((Number(startIndex) || 1) - 1) * limit;
-
+    const datetimeProd = 'DATE_ADD(n.updated_at, INTERVAL 7 HOUR) AS updated_at,'
     let sql = `
       SELECT 
         n.novel_id, 
@@ -523,7 +523,7 @@ const getMyNovels = async (
         n.novel_group, 
         n.type, 
         n.novel_propic, 
-        DATE_ADD(n.updated_at, INTERVAL 7 HOUR) AS updated_at, 
+        n.updated_at,
         n.published, 
         n.tag,
         COUNT(c.chapter_id) AS total_chapter
@@ -599,7 +599,7 @@ const getAllDescChapter = async (novelId, startIndex, limitIndex) => {
         chapter_id, 
         chapter_name, 
         comment, 
-        DATE_ADD(updated_at, INTERVAL 7 HOUR) AS updated_at 
+        updated_at 
       FROM chapter 
       WHERE novel_id = ? 
       ORDER BY updated_at DESC 
