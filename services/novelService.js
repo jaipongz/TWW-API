@@ -573,7 +573,7 @@ const getMyNovels = async (
     const mappedNovels = novels.map((novel) => ({
       ...novel,
       novel_propic: novel.novel_propic
-        ? `${process.env.DOMAIN}/storage/novelPropic/${novel.novel_propic.split("\\").pop()}`
+        ? `${process.env.DOMAIN}/storage/novelPropic/${novel.novel_propic.replace(/\\/g, '/').split('/').pop()}`
         : null,
     }));
 
