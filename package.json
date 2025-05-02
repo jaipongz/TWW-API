@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node server.ts",
-    "dev": "npm run swagger-autogen && nodemon server.ts",
+    "dev": "nodemon server.ts",
     "swagger-autogen": "node src/swagger.js",
     "build": "tsc"
   },

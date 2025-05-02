@@ -633,16 +633,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "string"
           }
         ],
         "responses": {
