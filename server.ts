@@ -46,11 +46,9 @@ app.use(commonRouter);
 const port = process.env.PORT || 3090;
 
 //use on localhost
-// app.listen(port, () => {
-//     console.log(`✪✪✪✪✪✪✪✪✪✪✪ ✮ Powered by JaipongZ Industry ✮ ✪✪✪✪✪✪✪✪✪✪✪`);
-//     console.log(`Api-docs is running on 👉 ${process.env.BASE_URL}/api-docs`);
-// });
+app.listen(port, () => {
+    console.log(`✪✪✪✪✪✪✪✪✪✪✪ ✮ Powered by JaipongZ Industry ✮ ✪✪✪✪✪✪✪✪✪✪✪`);
+    console.log(`Api-docs is running on 👉 ${process.env.BASE_URL}/api-docs`);
+});
 
-//env prod vercel
-module.exports = app;
 
