@@ -1,11 +1,11 @@
 const swaggerAutogen = require('swagger-autogen')();
-
+const BASE_URL = process.env.BASE_URL
 const doc = {
     info: {
         title: 'TWW-API',
         description: 'No one is as talented as your mother.',
     },
-    host: 'localhost:3090',
+    host: BASE_URL,
     schemes: ['http'],
     securityDefinitions: {
         Bearer: {
