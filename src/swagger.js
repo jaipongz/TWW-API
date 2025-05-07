@@ -1,12 +1,14 @@
 const swaggerAutogen = require('swagger-autogen')();
-const BASE_URL = process.env.BASE_URL
+const { config } = require('dotenv');
+config();
+const baseUrl = process.env.BASE_URL;
 const doc = {
     info: {
         title: 'TWW-API',
         description: 'No one is as talented as your mother.',
     },
-    host: BASE_URL,
-    schemes: ['http'],
+    host: baseUrl,
+    schemes: ['https'],
     securityDefinitions: {
         Bearer: {
             type: "apiKey",
